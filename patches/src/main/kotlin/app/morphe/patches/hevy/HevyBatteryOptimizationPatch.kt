@@ -5,6 +5,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.shared.Constants
+import app.morphe.patches.shared.removeComponentDiscoveryRegistrarsWhere
 import app.morphe.patches.shared.setAndroidAttribute
 import org.w3c.dom.Element
 
@@ -24,7 +25,6 @@ private val hevyBatteryResourcePatch = resourcePatch(
 
         val disabledComponents = setOf(
             // 1. Firebase & DataTransport Background Wakeups
-            "com.google.firebase.components.ComponentDiscoveryService",
             "com.google.android.datatransport.runtime.backends.TransportBackendDiscovery",
             "com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService",
             "com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver",
@@ -42,6 +42,7 @@ private val hevyBatteryResourcePatch = resourcePatch(
         var removedBillingQueries = 0
         var removedBillingPermissions = 0
         var removedLargeHeap = false
+        var removedDataTransportRegistrars = 0
 
         document(manifestFile.absolutePath).use { doc ->
             // 1. Disable background services, receivers, providers, and billing activities
@@ -111,11 +112,14 @@ private val hevyBatteryResourcePatch = resourcePatch(
                     appElem.removeAttribute("android:largeHeap")
                     removedLargeHeap = true
                 }
+                removedDataTransportRegistrars += appElem.removeComponentDiscoveryRegistrarsWhere {
+                    it == "com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+                }
             }
         }
 
         val largeHeapMsg = if (removedLargeHeap) ", removed android:largeHeap" else ""
-        println("[Stop Background Sync] Neutralized $neutralizedCount components, stripped $removedBillingPermissions billing perms, pruned $removedBillingQueries billing queries$largeHeapMsg in AndroidManifest.xml")
+        println("[Stop Background Sync] Neutralized $neutralizedCount components, stripped $removedBillingPermissions billing perms, pruned $removedBillingQueries billing queries, removed $removedDataTransportRegistrars DataTransport registrar(s)$largeHeapMsg in AndroidManifest.xml")
     }
 }
 

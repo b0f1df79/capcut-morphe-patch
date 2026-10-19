@@ -35,7 +35,7 @@ val hevyResourceSlimmerPatch = resourcePatch(
         var stubbedMediaCount = 0
         var junkFilesCount = 0
 
-        val apkRoot = get("AndroidManifest.xml").parentFile ?: get(".")
+        val apkRoot = get(".").absoluteFile.normalize()
         val protectedPrefixes = listOf("assets", "res", "smali", "lib")
 
         // 1. Clean up build properties, compiler junk, and obsolete licenses in APK root

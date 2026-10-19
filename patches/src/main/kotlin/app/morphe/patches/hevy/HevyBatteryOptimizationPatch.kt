@@ -5,7 +5,6 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.shared.Constants
-import app.morphe.patches.shared.ensureRegisterCount
 import app.morphe.patches.shared.setAndroidAttribute
 import org.w3c.dom.Element
 
@@ -24,27 +23,14 @@ private val hevyBatteryResourcePatch = resourcePatch(
         }
 
         val disabledComponents = setOf(
-            // 1. AndroidX WorkManager Alarm & Job Services
-            "androidx.work.impl.background.systemalarm.SystemAlarmService",
-            "androidx.work.impl.background.systemjob.SystemJobService",
-            "androidx.work.impl.foreground.SystemForegroundService",
-            "androidx.work.impl.utils.ForceStopRunnable\$BroadcastReceiver",
-            "androidx.work.impl.background.systemalarm.ConstraintProxy\$BatteryChargingProxy",
-            "androidx.work.impl.background.systemalarm.ConstraintProxy\$BatteryNotLowProxy",
-            "androidx.work.impl.background.systemalarm.ConstraintProxy\$StorageNotLowProxy",
-            "androidx.work.impl.background.systemalarm.ConstraintProxy\$NetworkStateProxy",
-            "androidx.work.impl.background.systemalarm.RescheduleReceiver",
-            "androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver",
-            "androidx.work.impl.diagnostics.DiagnosticsReceiver",
-
-            // 2. Firebase & DataTransport Background Wakeups
+            // 1. Firebase & DataTransport Background Wakeups
             "com.google.firebase.components.ComponentDiscoveryService",
             "com.google.android.datatransport.runtime.backends.TransportBackendDiscovery",
             "com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService",
             "com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver",
             "androidx.profileinstaller.ProfileInstallReceiver",
 
-            // 3. Google Play & Amazon Billing Activities
+            // 2. Google Play & Amazon Billing Activities
             "com.android.billingclient.api.ProxyBillingActivity",
             "com.android.billingclient.api.ProxyBillingActivityV2",
             "com.revenuecat.purchases.amazon.purchasing.ProxyAmazonBillingActivity",
@@ -58,18 +44,6 @@ private val hevyBatteryResourcePatch = resourcePatch(
         var removedLargeHeap = false
 
         document(manifestFile.absolutePath).use { doc ->
-            // Strip androidx.work.WorkManagerInitializer from InitializationProvider meta-data
-            val metaDataNodes = doc.getElementsByTagName("meta-data")
-            val metaToRemove = mutableListOf<Element>()
-            for (i in 0 until metaDataNodes.length) {
-                val elem = metaDataNodes.item(i) as? Element ?: continue
-                val name = elem.getAttribute("android:name")
-                if (name == "androidx.work.WorkManagerInitializer") {
-                    metaToRemove.add(elem)
-                }
-            }
-            metaToRemove.forEach { it.parentNode?.removeChild(it) }
-
             // 1. Disable background services, receivers, providers, and billing activities
             val tags = listOf("service", "receiver", "provider", "activity")
             for (tag in tags) {
@@ -163,16 +137,5 @@ val hevyBatteryOptimizationPatch = bytecodePatch(
         )
         billingFp.method.addInstructions(0, "return-void")
         println("[Stop Background Sync] Stubbed BillingClientImpl.startConnection to eliminate Play Store background IPC.")
-
-        Fingerprint(
-            definingClass = "Landroidx/work/WorkManagerInitializer;",
-            name = "create",
-            parameters = listOf("Landroid/content/Context;"),
-            returnType = "Ljava/lang/Object;",
-        ).method.apply {
-            ensureRegisterCount(2)
-            addInstructions(0, "const/4 v0, 0\nreturn-object v0")
-            println("[Stop Background Sync] Neutralized WorkManagerInitializer.create")
-        }
     }
 }

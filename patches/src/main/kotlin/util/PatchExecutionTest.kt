@@ -179,6 +179,18 @@ enum class TargetApp(
         patchDirectoryPart = "sube",
         referenceSha256 = Constants.SUBE_INPUT_SHA256,
     ),
+    SDMSE(
+        id = "sdmse",
+        appName = "SD Maid SE",
+        packageName = Constants.SDMSE_PACKAGE_NAME,
+        candidateFilenames = listOf(
+            "eu.darken.sdmse_2.2.2.apk",
+            "sdmse_${Constants.SDMSE_TARGET_VERSION}.apk",
+        ),
+        filePattern = Regex("(?i).*(?:sdmse|sdmaid).*\\.(?:apk|apkm|xapk)$"),
+        patchDirectoryPart = "sdmse",
+        referenceSha256 = Constants.SDMSE_INPUT_SHA256,
+    ),
     ;
 
     companion object {

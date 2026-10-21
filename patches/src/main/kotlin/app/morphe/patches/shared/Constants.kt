@@ -217,4 +217,21 @@ object Constants {
             )
         )
     )
+
+    const val SDMSE_PACKAGE_NAME = "eu.darken.sdmse"
+    const val SDMSE_TARGET_VERSION = "2.2.2-rc0"
+    const val SDMSE_INPUT_SHA256 = ""
+
+    val COMPATIBILITY_SDMSE = Compatibility(
+        name = "SD Maid SE",
+        packageName = SDMSE_PACKAGE_NAME,
+        apkFileType = ApkFileType.APK,
+        appIconColor = 0x4CAF50,
+        targets = listOf(
+            AppTarget(
+                version = SDMSE_TARGET_VERSION,
+                description = "Download eu.darken.sdmse v2.2.2-rc0 (APK) FOSS-RELEASE versionCode 20202000",
+            )
+        )
+    )
 }

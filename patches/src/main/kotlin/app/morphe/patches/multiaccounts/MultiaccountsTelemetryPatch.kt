@@ -1,13 +1,17 @@
 package app.morphe.patches.multiaccounts
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.instructionsOrNull
+import app.morphe.patcher.extensions.InstructionExtensions.removeInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.shared.Constants.COMPATIBILITY_MULTIACCOUNTS
+import app.morphe.patches.shared.clearTryBlocks
 import app.morphe.patches.shared.disableComponentsWhere
 import app.morphe.patches.shared.removeComponentDiscoveryRegistrarsWhere
+import app.morphe.patches.shared.replaceWithReturnNull
 import app.morphe.patches.shared.replaceWithReturnVoid
 import app.morphe.patches.shared.setApplicationMetaData
 import app.morphe.patches.shared.stripPermissionsWhere
@@ -416,6 +420,13 @@ private val SDK_HOOK_FAMILIES = listOf(
             TargetMethod("flush", emptyList()),
         ),
     ),
+    SdkHookFamily(
+        definingClass = "Lcom/tiktok/appevents/TTRequest;",
+        label = "TikTok TTRequest",
+        methods = listOf(
+            TargetMethod("notifyChange", emptyList()),
+        ),
+    ),
 )
 
 // String-anchored fingerprints for host rewrites in obfuscated OkHttp DoH and analytics classes
@@ -468,6 +479,72 @@ val multiaccountsTelemetryPatch = bytecodePatch(
 
             if (familyHooked > 0) {
                 hookCounts[family.label] = familyHooked
+                touchedClasses++
+            }
+        }
+
+        // TikTok Business SDK Callback Neutralization:
+        // initializeSdk(TTConfig, TTInitCallback) is called by com.excelliance.kxqp.util.ql.
+        // Replace body to safely invoke callback.success() if non-null without performing
+        // network init, config fetch, or background tracking loop setup.
+        classDefByOrNull("Lcom/tiktok/TikTokBusinessSdk;")?.let { classDef ->
+            val mutableClass = mutableClassDefBy(classDef)
+            val initCallbackMethod = mutableClass.methods.firstOrNull { m ->
+                m.name == "initializeSdk" &&
+                    m.parameters.map { it.type } == listOf(
+                        "Lcom/tiktok/TikTokBusinessSdk\$TTConfig;",
+                        "Lcom/tiktok/TikTokBusinessSdk\$TTInitCallback;",
+                    )
+            }
+            if (initCallbackMethod != null && initCallbackMethod.implementation != null) {
+                initCallbackMethod.clearTryBlocks()
+                initCallbackMethod.implementation?.let { removeInstructions(0, it.instructions.count()) }
+                initCallbackMethod.addInstructions(
+                    0,
+                    """
+                        if-eqz p1, :done
+                        invoke-interface {p1}, Lcom/tiktok/TikTokBusinessSdk${'$'}TTInitCallback;->success()V
+                        :done
+                        return-void
+                    """.trimIndent(),
+                )
+                patched++
+                hookCounts["TikTok Business SDK Callback"] = 1
+            }
+        }
+
+        // TikTok TTRequest transport cut:
+        // Null out remote config and event batch dispatchers returning JSONObject or List
+        classDefByOrNull("Lcom/tiktok/appevents/TTRequest;")?.let { classDef ->
+            val mutableClass = mutableClassDefBy(classDef)
+            var ttRequestCut = 0
+            for (m in mutableClass.methods) {
+                if (m.name in setOf("getBusinessSDKConfig", "getDebugModeConfig", "reportAppEvent", "fetchDeferredDeeplinkWithCompletion", "reportMonitorEvent") &&
+                    m.implementation != null
+                ) {
+                    m.replaceWithReturnNull()
+                    patched++
+                    ttRequestCut++
+                }
+            }
+            if (ttRequestCut > 0) {
+                hookCounts["TikTok Transport (TTRequest)"] = (hookCounts["TikTok Transport (TTRequest)"] ?: 0) + ttRequestCut
+            }
+        }
+
+        // TikTok HttpRequestUtil transport cut (SDK-internal HTTP client):
+        classDefByOrNull("Lcom/tiktok/util/HttpRequestUtil;")?.let { classDef ->
+            val mutableClass = mutableClassDefBy(classDef)
+            var httpCut = 0
+            for (m in mutableClass.methods) {
+                if ((m.name == "doPost" || m.name == "doGet") && m.implementation != null) {
+                    m.replaceWithReturnNull()
+                    patched++
+                    httpCut++
+                }
+            }
+            if (httpCut > 0) {
+                hookCounts["TikTok Transport (HttpRequestUtil)"] = httpCut
                 touchedClasses++
             }
         }

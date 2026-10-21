@@ -1,3 +1,11 @@
+## [1.25.1](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.25.0...v1.25.1) (2026-10-21)
+
+### Bug Fixes
+
+* **capcut:** stub cracking verdict persistence and security dialog render ([4c57aee](https://github.com/kveld9/kveld-extra-morphe-patches/commit/4c57aee29e3496c796630772cc9aae865b2b0c3e))
+* **officehub:** keep the app launching when custom blocked hosts are set ([cf3a2c1](https://github.com/kveld9/kveld-extra-morphe-patches/commit/cf3a2c1c8bc80345b824ccf7b9ec726e1bd71abe))
+* **sdmse:** stop the patched app from crashing at launch on Android 16 ([816c011](https://github.com/kveld9/kveld-extra-morphe-patches/commit/816c01150653611ab9b5df866f14d54876a38269))
+
 ## [1.25.0](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.24.0...v1.25.0) (2026-10-21)
 
 ### Bug Fixes

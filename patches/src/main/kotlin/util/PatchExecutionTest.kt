@@ -196,8 +196,8 @@ enum class TargetApp(
         appName = "Multiple Accounts",
         packageName = Constants.MULTIACCOUNTS_PACKAGE_NAME,
         candidateFilenames = listOf(
-            "multiaccounts_5.8.2.apk",
-            "com.excelliance.multiaccounts_5.8.2-672_minAPI23(arm64-v8a)(nodpi)_apkmirror.com.apk",
+            "multiaccounts_${Constants.MULTIACCOUNTS_TARGET_VERSION}.apk",
+            "com.excelliance.multiaccounts_${Constants.MULTIACCOUNTS_TARGET_VERSION}-672_minAPI23(arm64-v8a)(nodpi)_apkmirror.com.apk",
         ),
         filePattern = Regex("(?i).*(?:multiaccounts|multiple.?accounts).*\\.(?:apk|apkm|xapk)$"),
         patchDirectoryPart = "multiaccounts",

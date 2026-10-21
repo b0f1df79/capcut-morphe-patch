@@ -230,14 +230,14 @@ object Constants {
         targets = listOf(
             AppTarget(
                 version = SDMSE_TARGET_VERSION,
-                description = "Download eu.darken.sdmse v2.2.2-rc0 (APK) FOSS-RELEASE versionCode 20202000",
+                description = "Download eu.darken.sdmse v$SDMSE_TARGET_VERSION (APK) FOSS-RELEASE versionCode 20202000",
             )
         )
     )
 
     const val MULTIACCOUNTS_PACKAGE_NAME = "com.excelliance.multiaccounts"
     const val MULTIACCOUNTS_TARGET_VERSION = "5.8.2"
-    const val MULTIACCOUNTS_INPUT_SHA256 = ""
+    const val MULTIACCOUNTS_INPUT_SHA256 = "48a10a394b619fe5aa76e171f62e3b1d61590c651e0f3161ae031c9df3d23c66"
 
     val COMPATIBILITY_MULTIACCOUNTS = Compatibility(
         name = "Multiple Accounts",

@@ -2,7 +2,7 @@
 """Scheduled upstream app update checker for Morphe Patches (Extra Apps).
 
 Parses target versions from Constants.kt, queries upstream public sources
-(APKMirror, Uptodown, APKPure, and GitHub), and reports whether updates are available.
+(APKMirror, APKPure, and GitHub), and reports whether updates are available.
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ APP_SPECS: List[Dict[str, Any]] = [
     #     "name": "My App",                         # 2. Display name shown in logs, issue titles, and alerts
     #     "package_name": "com.example.app",        # 3. Android application package name
     #     "constant_key": "MY_APP_TARGET_VERSION",  # 4. Target version constant defined in Constants.kt
-    #     "source_type": "apkpure",                 # 5. Upstream host type: "apkpure", "uptodown", "apkmirror", or "github"
+    #     "source_type": "apkpure",                 # 5. Upstream host type: "apkpure", "apkmirror", or "github"
     #     "source_name": "APKPure",                 # 6. Display name of upstream host, must match the entry's source
     #     "source_url": "https://apkpure.com/slug/com.example.app",  # 7. Canonical listing URL (HTTP 200 verified live)
     #     "allow_beta": False,                      # Pre-release filter (typically False for stable patch releases)
@@ -388,86 +388,6 @@ def extract_apkmirror_version(
     return candidates[0][2]
 
 
-def extract_uptodown_version(html: str) -> Optional[str]:
-    """Extract latest remote version from Uptodown page HTML.
-
-    Host: Uptodown (https://<slug>.en.uptodown.com/android)
-    Precedence: Download-link version (/download button) beats metadata
-    (div.version) and JSON-LD schema (softwareVersion/version). If no downloadable
-    version can be confirmed, returns None (reported as unknown).
-    Fixture tests: test_uptodown_download_link_beats_metadata,
-                   test_uptodown_unknown_when_empty_or_corrupt
-    """
-    if not html:
-        return None
-
-    # 1. Download-link version on page (e.g. <a href=".../download"...><p class="version">X.Y.Z</p>)
-    dl_version: Optional[str] = None
-    dl_match = re.search(
-        r'<a[^>]*href="[^"]*/download"[^>]*>.*?<(?:p|span)[^>]*class="[^"]*version[^"]*"[^>]*>([^<]+)</(?:p|span)>',
-        html,
-        re.DOTALL | re.I,
-    )
-    if dl_match:
-        dl_version = dl_match.group(1).strip()
-    else:
-        dl_btn = re.search(
-            r'id="button-download-page-link"[^>]*>.*?(?:v(?:ersion)?\s*)?(\d+(?:\.\d+)+(?:[a-zA-Z0-9._-]+)?)',
-            html,
-            re.DOTALL | re.I,
-        )
-        if dl_btn:
-            dl_version = dl_btn.group(1).strip()
-
-    # 2. Page metadata version (e.g. <div class="version">X.Y.Z</div>)
-    meta_version: Optional[str] = None
-    meta_match = re.search(
-        r'<div[^>]*class="[^"]*version[^"]*"[^>]*>([^<]+)</div>',
-        html,
-        re.I,
-    )
-    if meta_match:
-        meta_version = meta_match.group(1).strip()
-
-    # 3. schema.org JSON-LD
-    json_ld_version: Optional[str] = None
-    for m in re.finditer(
-        r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>',
-        html,
-        re.DOTALL,
-    ):
-        try:
-            data = json.loads(m.group(1))
-            items = data if isinstance(data, list) else [data]
-            for item in items:
-                v = item.get("softwareVersion") or item.get("version")
-                if v and isinstance(v, str):
-                    json_ld_version = v.strip()
-                    break
-            if json_ld_version:
-                break
-        except Exception:
-            pass
-
-    # Resolution: download-link version takes precedence over metadata
-    if dl_version:
-        core_dl, _ = parse_version(dl_version)
-        if core_dl:
-            return dl_version
-
-    if meta_version:
-        core_meta, _ = parse_version(meta_version)
-        if core_meta:
-            return meta_version
-
-    if json_ld_version:
-        core_ld, _ = parse_version(json_ld_version)
-        if core_ld:
-            return json_ld_version
-
-    return None
-
-
 def extract_apkpure_version(html: str) -> Optional[str]:
     """Extract latest remote version from APKPure listing HTML.
 
@@ -587,7 +507,6 @@ def run_update_checks(
         source_type = spec["source_type"]
         source_name = spec.get("source_name") or {
             "apkmirror": "APKMirror",
-            "uptodown": "Uptodown",
             "apkpure": "APKPure",
             "github": "GitHub",
         }.get(source_type, source_type.title())
@@ -611,8 +530,6 @@ def run_update_checks(
                     spec["path_prefix"],
                     allow_beta=allow_beta,
                 )
-            elif source_type == "uptodown":
-                remote_version = extract_uptodown_version(html)
             elif source_type == "apkpure":
                 remote_version = extract_apkpure_version(html)
             elif source_type == "github":
@@ -723,7 +640,7 @@ class TestUpdateChecker(unittest.TestCase):
     """Fixture tests covering version comparison, conflicting metadata, and extraction."""
 
     def test_version_schemes(self) -> None:
-        """Verify non-plain version schemes (twitter prod suffix, microsoft 4-part, lightroom)."""
+        """Verify non-plain version schemes (twitter prod suffix, microsoft 4-part, zero-padded minor)."""
         # Twitter prod suffix
         self.assertEqual(compare_versions("12.34.0-prod.01", "12.34.0-prod.01"), "current")
         self.assertEqual(compare_versions("12.34.0-prod.01", "12.35.0-prod.01"), "update-available")
@@ -739,33 +656,9 @@ class TestUpdateChecker(unittest.TestCase):
         self.assertEqual(compare_versions("447.0.0.55.81", "447.0.0.55.81"), "current")
         self.assertEqual(compare_versions("447.0.0.55.81", "448.0.0.1.1"), "update-available")
 
-        # Lightroom 11.6.01
+        # Zero-padded minor segment (e.g. 11.6.01)
         self.assertEqual(compare_versions("11.6.01", "11.6.01"), "current")
         self.assertEqual(compare_versions("11.6.01", "11.6.10"), "update-available")
-
-    def test_uptodown_download_link_beats_metadata(self) -> None:
-        """Download-link version must take precedence over contradictory metadata."""
-        fixture_html = """
-        <html>
-          <head>
-            <script type="application/ld+json">{"softwareVersion": "12.0.0"}</script>
-          </head>
-          <body>
-            <div class="version">11.9.0</div>
-            <a id="button-download-page-link" href="https://example.uptodown.com/android/download" class="button latest">
-              <span class="download-text">Download</span>
-              <p class="version">11.6.01</p>
-            </a>
-          </body>
-        </html>
-        """
-        ver = extract_uptodown_version(fixture_html)
-        self.assertEqual(ver, "11.6.01")
-
-    def test_uptodown_unknown_when_empty_or_corrupt(self) -> None:
-        """Report None (unknown) when no valid version can be parsed."""
-        self.assertIsNone(extract_uptodown_version(""))
-        self.assertIsNone(extract_uptodown_version("<html><body>No version here</body></html>"))
 
     def test_apkmirror_extraction_and_beta_filter(self) -> None:
         """Verify APKMirror listing extraction filters out betas when allow_beta=False."""

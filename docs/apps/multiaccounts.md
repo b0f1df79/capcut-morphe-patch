@@ -24,6 +24,8 @@ Technical documentation and patch catalog for Multiple Accounts (com.excelliance
 | :--- | :--- | :--- | :--- | :--- |
 | **Multiaccounts Telemetry Manifest Purge** | `resourcePatch` | `false` (Opt-in) | None | Strips advertising permissions, disables ad network providers, activities, services, and receivers, prunes telemetry registrars, and injects opt-out metadata flags in AndroidManifest.xml. |
 | **Block Telemetry & Trackers** | `bytecodePatch` | `true` (Enabled) | `Multiaccounts Telemetry Manifest Purge` | Neutralizes in-house statistics, ByteDance AppLog, AppLovin MAX, Google Measurement, AppMetrica, Tenjin, IronSource, and Pangle ad/telemetry dispatchers, redirects isolated tracking host literals to 0.0.0.0, disables ad and tracking manifest components, and injects opt-out metadata flags. |
+| **Multiaccounts Privacy Setup** | `resourcePatch` | `false` (Opt-in) | None | Configures network_security_config.xml to trust user CA certificates for TLS inspection while preserving cleartext traffic. |
+| **Privacy Controls** | `bytecodePatch` | `false` (Opt-in) | `Multiaccounts Privacy Setup` | Neutralizes clipboard snooping in ByteDance AppLog attribution and disables OkHttp certificate pinning for network traffic auditing. |
 
 ---
 
@@ -47,6 +49,10 @@ Multiple Accounts (2Accounts dual-space clone) is a virtualization container app
      - **Opt-Out Metadata**: Injects declarative opt-out flags for Firebase Analytics, Crashlytics, Performance, Google Analytics ADID / personalization, Yandex Mobile Ads automatic initialization (`false`), MyTarget autoInitMode (`0`), and Google Ads initialization optimization (`false`).
      - **Preservation**: Core guest container virtualization components (`com.excelliance.kxqp.platform.proxy.*`), app-owned push (`MyFirebaseMessagingService`), Firebase push infra (`FirebaseMessagingService`, `FirebaseInstanceIdReceiver`, `FirebaseInitProvider`), Google Play Billing (`ProxyBillingActivity`, `ProxyBillingActivityV2`), and Zendesk support components (`DeepLinkingBroadcastReceiver`, `SupportSdkStartupProvider`, etc.) are strictly preserved.
 
+2. **Multiaccounts Privacy Setup**:
+   - **Objective**: Configure network security policy to trust user CA certificates for TLS proxy auditing without breaking container IPC or cleartext communication.
+   - **How**: Injects `<trust-anchors>` with `<certificates src="system" />` and `<certificates src="user" />` into `<base-config>` inside `res/xml/network_security_config.xml` while strictly preserving `cleartextTrafficPermitted="true"` for guest application and local proxy compatibility.
+
 ### B. Bytecode Dispatcher Neutralization Layer (`bytecodePatch`)
 
 1. **Block Telemetry & Trackers**:
@@ -63,6 +69,20 @@ Multiple Accounts (2Accounts dual-space clone) is a virtualization container app
      - **Pangle PAGSdk (`com.bytedance.sdk.openadsdk.api.init.PAGSdk`)**: Ad revenue reporter stubbed (`setAdRevenue`).
      - **DNS-over-HTTPS & In-House Endpoint Host Redirection**: Indexed string fingerprints redirect isolated host literals (`log.multispaces.net`, `ad.multispaces.net`) and telemetry URL hosts (`statis.multispaces.net`) to `0.0.0.0` while strictly preserving scheme, path, and URL structure for URI parser stability.
 
+2. **Privacy Controls**:
+   - **Objective**: Neutralize active first-party behavioral data collection (clipboard snooping) and eliminate OkHttp certificate pinning to enable privacy traffic inspection.
+   - **How**:
+     - **Clipboard Snooping Neutralization (`com.bytedance.applog.alink.util.LinkUtils`)**: Stubs `getParamFromClipboard(Context)` to return `null` via `replaceWithReturnNull()`. Eliminates background clipboard inspection for attribution links (`datatracer:`) on application launch while leaving system UI text operations and `AppCompatReceiveContentHelper` intact.
+     - **OkHttp Certificate Pinning Neutralization (`okhttp3.CertificatePinner`)**: Stubs all certificate pinner verification overloads with `replaceWithReturnVoid()` (`check(String, List)`, `check(String, Certificate[])`, and Kotlin-mangled `check$okhttp(String, Function0)` with relocated signature `check$okhttp(String, Lie/a;)`). Prevents `SSLPeerUnverifiedException` when routing application traffic through a local inspection proxy (mitmproxy, Charles) with user CA certificates.
+   - **Universal Classification & Non-Applicable Surfaces**:
+     - **Remove Permissions**: `UNIVERSAL_OK`. The host container declares sensitive permissions (e.g. `CAMERA`, `RECORD_AUDIO`, `READ_CONTACTS`, `ACCESS_FINE_LOCATION`) needed by cloned guest applications. The universal `Remove Permissions` patch (`UniversalPrivacyPermissionsPatch`) operates cleanly via manifest stripping if the user opts in; no dedicated bytecode check bypass is required.
+     - **Go Fully Offline**: `NOT_APPLICABLE`. Fails the Offline Applicability Gate because Multiple Accounts is a virtualization container whose cloned guest applications (e.g. messaging, social feeds) depend on internet connectivity; stripping `INTERNET` host-wide breaks guest process sockets.
+     - **Allow Screen Capture / Screenshots**: `UNIVERSAL_OK`. Audited across 72 capture guard hits; no app-own activities set `FLAG_SECURE` or `setSecure(true)`. Window flag call sites exist solely in ad SDK activities (already suppressed by Telemetry Manifest Purge).
+     - **Lock Screen Brightness / Force Screen Timeout**: `UNIVERSAL_OK`. Universal-only patches; no custom brightness or screen timeout overrides exist in app bytecode.
+     - **Share-Link Tracking Stripping**: `UNIVERSAL_OK` / `TRANSITIVELY_DEAD`. The single `gclid=%s` measurement hit resides in GMS measurement (`zzkx`), neutralized by the telemetry patch; app-own `AppealActivity` email builder does not append tracking query parameters.
+     - **Identifiers & Telephony**: 46 identifier and 93 telephony hits audited. Ad SDK callers are `TRANSITIVELY_DEAD`; app-own `la` calls GMS `AdvertisingIdClient` and `AppSetIdClient` via coroutine suspend lambdas/callbacks; `getInstalledPackages` is virtualization-critical for selecting clone targets.
+     - **Sensors, Contacts, Battery**: Sensor listeners and battery receivers reside exclusively in ad SDKs and AndroidX media/workmanager; contacts URI reference in Picasso image handler is passive; all ad SDK collectors are `TRANSITIVELY_DEAD`.
+
 ---
 
 ## 4. Behavioral Hazards Warning
@@ -75,6 +95,12 @@ Multiple Accounts (2Accounts dual-space clone) is a virtualization container app
 
 2. **Push Notification Infrastructure and FirebaseInitProvider Preservation**:
    `com.google.firebase.provider.FirebaseInitProvider`, `com.google.firebase.messaging.FirebaseMessagingService`, and `com.google.firebase.iid.FirebaseInstanceIdReceiver` must remain enabled. Multiple Accounts relies on Firebase initialization for dual-space notification multiplexing and synchronous app-state services. Telemetry suppression is achieved through manifest component disabling of analytics services, removal of `AnalyticsConnectorRegistrar`, declarative opt-out flags, and Dalvik bytecode stubs without altering core Firebase runtime initialization.
+
+3. **Certificate Pinning & User CA Scope in Guest Containers**:
+   Enabling user CA trust and neutralizing `CertificatePinner` allows full HTTPS inspection of the Multiple Accounts host process. However, secondary applications cloned inside the container run with their own sandboxed bytecode and network configurations; guest application pinning is not altered by host-level patches.
+
+4. **First-Party Behavioral Privacy & Guest Process Isolation**:
+   Neutralizing clipboard snooping in `LinkUtils` stops attribution harvesting by the host application on launch. Cloned guest applications still possess direct platform clipboard access within their respective sandboxes according to standard Android permissions.
 
 ---
 

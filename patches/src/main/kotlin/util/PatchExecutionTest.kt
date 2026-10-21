@@ -1257,12 +1257,15 @@ private fun checkDexHeader(file: File, root: File): String? {
     return null
 }
 
+// Raw assets under other/ are excluded because ART never loads them as app DEX.
 private fun findDexFiles(root: File): List<File> {
     if (!root.isDirectory) return emptyList()
-    return root.walkTopDown()
-        .filter { it.isFile && it.extension.equals("dex", ignoreCase = true) }
+    val pattern = Regex("""^classes\d*\.dex$""", RegexOption.IGNORE_CASE)
+    return listOf(File(root, "dex"), File(root, "originalDex"))
+        .mapNotNull { it.listFiles() }
+        .flatMap { it.toList() }
+        .filter { it.isFile && pattern.matches(it.name) }
         .sortedBy { it.path }
-        .toList()
 }
 
 private fun findMalformedDexHeaders(root: File, dexFiles: List<File> = findDexFiles(root)): List<String> {

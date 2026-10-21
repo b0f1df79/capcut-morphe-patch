@@ -1,3 +1,9 @@
+## [1.25.2](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.25.1...v1.25.2) (2026-10-21)
+
+### Bug Fixes
+
+* **twitter:** document the manifest purge as the telemetry setup patch ([#20](https://github.com/kveld9/kveld-extra-morphe-patches/issues/20)) ([5e05106](https://github.com/kveld9/kveld-extra-morphe-patches/commit/5e05106b91c37ca19e8269eaa7f322d92b509c12))
+
 ## [1.25.1](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.25.0...v1.25.1) (2026-10-21)
 
 ### Bug Fixes

@@ -29,6 +29,7 @@ private val BLOCKED_PERMISSIONS = setOf(
     "android.permission.ACCESS_ADSERVICES_TOPICS",
 )
 
+// Load-bearing first-party static-data provider (authority <package>.staticslioprovider) queried at app startup; disabling it kills the process (observed: logcat "Failed to find provider info for ...staticslioprovider" then process death + downstream UnsatisfiedLinkError in com.excelliance.kxqp.util natives whose payload this provider serves).
 private val BLOCKED_PROVIDERS = setOf(
     "com.applovin.sdk.AppLovinInitProvider",
     "com.yandex.mobile.ads.core.initializer.MobileAdsInitializeProvider",
@@ -38,7 +39,6 @@ private val BLOCKED_PROVIDERS = setOf(
     "com.vungle.ads.VungleProvider",
     "com.ironsource.lifecycle.IronsourceLifecycleProvider",
     "com.ironsource.lifecycle.LevelPlayActivityLifecycleProvider",
-    "com.android.staticslio.StaticDataContentProvider",
     "com.mbridge.msdk.config.component.status.MBComponentLifecycleProvider",
     "com.secmtp.sdk.core.api.ATInitializationProvider",
     "com.smartdigimkt.sdk.api.SDMInitializationProvider",

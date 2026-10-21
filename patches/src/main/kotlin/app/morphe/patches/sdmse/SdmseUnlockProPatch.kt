@@ -6,12 +6,12 @@ import app.morphe.patcher.extensions.InstructionExtensions.instructionsOrNull
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.morphe.patches.shared.Constants.COMPATIBILITY_SDMSE
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.Method
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
@@ -99,18 +99,22 @@ val sdmseUnlockProPatch = bytecodePatch(
         shortCircuitIsPro(IsProSuspendFingerprint.method)
 
         var patchedReads = 0
+        var patchedClasses = 0
         classDefForEach { classDef ->
+            if (!readsFossIsProField(classDef)) return@classDefForEach
+
             val mutableClass = mutableClassDefBy(classDef)
             for (method in mutableClass.methods) {
                 patchedReads += patchMethodReads(method)
             }
+            patchedClasses++
         }
 
         if (patchedReads == 0) {
             throw PatchException("No $FOSS_INFO_CLASS.$FIELD_IS_PRO reads found — fingerprint may be stale.")
         }
 
-        println("[Unlock Pro] Applied FOSS unlock: constructor hooked, isPro() short-circuited, $patchedReads field read(s) forced to true.")
+        println("[Unlock Pro] Applied FOSS unlock: constructor hooked, isPro() short-circuited, $patchedReads field read(s) in $patchedClasses class(es) forced to true.")
     }
 }
 
@@ -162,6 +166,12 @@ private fun isFossIsProRead(instruction: Instruction): Boolean {
     val ref = (instruction as? ReferenceInstruction)?.reference as? FieldReference ?: return false
     return isFossIsProField(ref)
 }
+
+private fun readsFossIsProField(method: Method): Boolean =
+    method.implementation?.instructions?.any { isFossIsProRead(it) } == true
+
+private fun readsFossIsProField(classDef: ClassDef): Boolean =
+    classDef.methods.any { readsFossIsProField(it) }
 
 private fun patchFieldRead(method: MutableMethod, index: Int, instruction: Instruction): Boolean {
     if (!isFossIsProRead(instruction)) return false

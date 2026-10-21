@@ -2,7 +2,7 @@
 """Scheduled upstream app update checker for Morphe Patches (Extra Apps).
 
 Parses target versions from Constants.kt, queries upstream public sources
-(APKMirror, Uptodown, and APKPure), and reports whether updates are available.
+(APKMirror, Uptodown, APKPure, and GitHub), and reports whether updates are available.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ APP_SPECS: List[Dict[str, Any]] = [
     #     "name": "My App",                         # 2. Display name shown in logs, issue titles, and alerts
     #     "package_name": "com.example.app",        # 3. Android application package name
     #     "constant_key": "MY_APP_TARGET_VERSION",  # 4. Target version constant defined in Constants.kt
-    #     "source_type": "apkpure",                 # 5. Upstream host type: "apkpure", "uptodown", or "apkmirror"
+    #     "source_type": "apkpure",                 # 5. Upstream host type: "apkpure", "uptodown", "apkmirror", or "github"
     #     "source_name": "APKPure",                 # 6. Display name of upstream host, must match the entry's source
     #     "source_url": "https://apkpure.com/slug/com.example.app",  # 7. Canonical listing URL (HTTP 200 verified live)
     #     "allow_beta": False,                      # Pre-release filter (typically False for stable patch releases)
@@ -169,16 +169,16 @@ APP_SPECS: List[Dict[str, Any]] = [
         "allow_beta": False,
     },
     # --------------------------------------------------------------------------
-    # SD Maid SE (APKPure) - copy-paste-filled from "ADD NEW APP HERE" template
+    # SD Maid SE (GitHub) - copy-paste-filled from "ADD NEW APP HERE" template
     # --------------------------------------------------------------------------
     {
         "id": "sdmse",
         "name": "SD Maid SE",
         "package_name": "eu.darken.sdmse",
         "constant_key": "SDMSE_TARGET_VERSION",
-        "source_type": "apkpure",
-        "source_name": "APKPure",
-        "source_url": "https://apkpure.com/sd-maid-2-se-system-cleaner/eu.darken.sdmse",
+        "source_type": "github",
+        "source_name": "GitHub",
+        "source_url": "https://github.com/d4rken-org/sdmaid-se/releases",
         "allow_beta": True,
     },
 ]
@@ -499,6 +499,38 @@ def extract_apkpure_version(html: str) -> Optional[str]:
     return None
 
 
+def _normalize_github_tag(tag: str, allow_beta: bool) -> Optional[str]:
+    """Normalize GitHub release tag to version string if valid and allowed."""
+    if not allow_beta and re.search(r"\b(beta|alpha|preview|rc)\d*\b", tag, re.I):
+        return None
+    clean = tag.strip().lstrip("vV")
+    core, _ = parse_version(clean)
+    return clean if core else None
+
+
+def extract_github_version(
+    html: str,
+    allow_beta: bool = True,
+) -> Optional[str]:
+    """Extract latest remote version from GitHub releases page HTML or JSON payload.
+
+    Host: GitHub (https://github.com/<owner>/<repo>/releases)
+    Precedence: First valid release tag in listing order, stripping leading 'v'/'V'.
+    Filters out prereleases unless allow_beta=True.
+    Fixture test: test_github_extraction_sdmse
+    """
+    if not html:
+        return None
+
+    pattern = r'(?:/releases/tag/|"tag_name":\s*")([^"\'/?#]+)'
+    for raw_tag in re.findall(pattern, html):
+        ver = _normalize_github_tag(raw_tag, allow_beta)
+        if ver:
+            return ver
+
+    return None
+
+
 def run_update_checks(
     constants_path: Path,
     fetch_fn: Optional[Callable[[str], Optional[str]]] = None,
@@ -519,6 +551,7 @@ def run_update_checks(
             "apkmirror": "APKMirror",
             "uptodown": "Uptodown",
             "apkpure": "APKPure",
+            "github": "GitHub",
         }.get(source_type, source_type.title())
         source_url = spec["source_url"]
         allow_beta = spec.get("allow_beta", False)
@@ -544,6 +577,8 @@ def run_update_checks(
                 remote_version = extract_uptodown_version(html)
             elif source_type == "apkpure":
                 remote_version = extract_apkpure_version(html)
+            elif source_type == "github":
+                remote_version = extract_github_version(html, allow_beta=allow_beta)
 
         if not remote_version:
             status = "unknown"
@@ -718,6 +753,25 @@ class TestUpdateChecker(unittest.TestCase):
         </html>
         """
         self.assertIsNone(extract_apkpure_version(metadata_only_html))
+
+    def test_github_extraction_sdmse(self) -> None:
+        """Verify GitHub extracts SD Maid SE release tag including rc prereleases."""
+        fixture_html = """
+        <div class="repository-content">
+          <section id="release-v2.2.2-rc0" data-release-anchor="release-v2.2.2-rc0">
+            <span class="f1 text-bold d-inline">
+              <a href="/d4rken-org/sdmaid-se/releases/tag/v2.2.2-rc0" class="Link--primary Link">v2.2.2-rc0</a>
+            </span>
+          </section>
+          <section id="release-v2.2.1-rc0" data-release-anchor="release-v2.2.1-rc0">
+            <span class="f1 text-bold d-inline">
+              <a href="/d4rken-org/sdmaid-se/releases/tag/v2.2.1-rc0" class="Link--primary Link">v2.2.1-rc0</a>
+            </span>
+          </section>
+        </div>
+        """
+        ver = extract_github_version(fixture_html, allow_beta=True)
+        self.assertEqual(ver, "2.2.2-rc0")
 
 
 def main() -> int:

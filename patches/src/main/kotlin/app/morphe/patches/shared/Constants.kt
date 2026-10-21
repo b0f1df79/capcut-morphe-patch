@@ -234,4 +234,21 @@ object Constants {
             )
         )
     )
+
+    const val MULTIACCOUNTS_PACKAGE_NAME = "com.excelliance.multiaccounts"
+    const val MULTIACCOUNTS_TARGET_VERSION = "5.8.2"
+    const val MULTIACCOUNTS_INPUT_SHA256 = ""
+
+    val COMPATIBILITY_MULTIACCOUNTS = Compatibility(
+        name = "Multiple Accounts",
+        packageName = MULTIACCOUNTS_PACKAGE_NAME,
+        apkFileType = ApkFileType.APK,
+        appIconColor = 0x3F51B5,
+        targets = listOf(
+            AppTarget(
+                version = MULTIACCOUNTS_TARGET_VERSION,
+                description = "Download com.excelliance.multiaccounts v$MULTIACCOUNTS_TARGET_VERSION (APK) arm64-v8a versionCode 672 from APKMirror",
+            )
+        )
+    )
 }

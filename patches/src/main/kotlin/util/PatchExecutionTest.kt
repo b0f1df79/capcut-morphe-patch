@@ -191,6 +191,18 @@ enum class TargetApp(
         patchDirectoryPart = "sdmse",
         referenceSha256 = Constants.SDMSE_INPUT_SHA256,
     ),
+    MULTIACCOUNTS(
+        id = "multiaccounts",
+        appName = "Multiple Accounts",
+        packageName = Constants.MULTIACCOUNTS_PACKAGE_NAME,
+        candidateFilenames = listOf(
+            "multiaccounts_5.8.2.apk",
+            "com.excelliance.multiaccounts_5.8.2-672_minAPI23(arm64-v8a)(nodpi)_apkmirror.com.apk",
+        ),
+        filePattern = Regex("(?i).*(?:multiaccounts|multiple.?accounts).*\\.(?:apk|apkm|xapk)$"),
+        patchDirectoryPart = "multiaccounts",
+        referenceSha256 = Constants.MULTIACCOUNTS_INPUT_SHA256,
+    ),
     ;
 
     companion object {

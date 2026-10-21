@@ -181,6 +181,17 @@ APP_SPECS: List[Dict[str, Any]] = [
         "source_url": "https://github.com/d4rken-org/sdmaid-se/releases",
         "allow_beta": True,
     },
+    {
+        "id": "multiaccounts",
+        "name": "Multiple Accounts",
+        "package_name": "com.excelliance.multiaccounts",
+        "constant_key": "MULTIACCOUNTS_TARGET_VERSION",
+        "source_type": "apkmirror",
+        "source_name": "APKMirror",
+        "source_url": "https://www.apkmirror.com/apk/excelliance-technology/multiple-accounts-dual-accounts/",
+        "path_prefix": "/apk/excelliance-technology/multiple-accounts-dual-accounts/multiple-accounts-dual-accounts-",
+        "allow_beta": False,
+    },
 ]
 
 

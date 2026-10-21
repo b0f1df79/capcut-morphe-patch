@@ -344,6 +344,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | Xiaomi Earbuds | [Guide](docs/apps/xiaomi_earbuds.md) |
 | SUBE | [Guide](docs/apps/sube.md) |
 | SD Maid SE | [Guide](docs/apps/sdmse.md) |
+| Multiple Accounts | [Guide](docs/apps/multiaccounts.md) |
 
 <p align="center"><a href="#top"><b>&uarr; Back to top</b></a></p>
 

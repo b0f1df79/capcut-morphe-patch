@@ -26,6 +26,7 @@ Technical documentation and patch catalog for Multiple Accounts (com.excelliance
 | **Block Telemetry & Trackers** | `bytecodePatch` | `true` (Enabled) | `Multiaccounts Telemetry Manifest Purge` | Neutralizes in-house statistics, ByteDance AppLog, AppLovin MAX, Google Measurement, AppMetrica, Tenjin, IronSource, and Pangle ad/telemetry dispatchers, redirects isolated tracking host literals to 0.0.0.0, disables ad and tracking manifest components, and injects opt-out metadata flags. |
 | **Multiaccounts Privacy Setup** | `resourcePatch` | `false` (Opt-in) | None | Configures network_security_config.xml to trust user CA certificates for TLS inspection while preserving cleartext traffic. |
 | **Privacy Controls** | `bytecodePatch` | `false` (Opt-in) | `Multiaccounts Privacy Setup` | Neutralizes clipboard snooping in ByteDance AppLog attribution and disables OkHttp certificate pinning for network traffic auditing. |
+| **Sideload Compatibility** | `bytecodePatch` | `true` (Enabled) | None | Ensures compatibility for sideloaded installations by spoofing the official APK signature certificate for self-verification and neutralizing launch-blocking Google Play in-app update checks. |
 
 ---
 
@@ -83,6 +84,40 @@ Multiple Accounts (2Accounts dual-space clone) is a virtualization container app
      - **Identifiers & Telephony**: 46 identifier and 93 telephony hits audited. Ad SDK callers are `TRANSITIVELY_DEAD`; app-own `la` calls GMS `AdvertisingIdClient` and `AppSetIdClient` via coroutine suspend lambdas/callbacks; `getInstalledPackages` is virtualization-critical for selecting clone targets.
      - **Sensors, Contacts, Battery**: Sensor listeners and battery receivers reside exclusively in ad SDKs and AndroidX media/workmanager; contacts URI reference in Picasso image handler is passive; all ad SDK collectors are `TRANSITIVELY_DEAD`.
 
+### C. Sideload & Compatibility Bypass Layer (`bytecodePatch`)
+
+1. **Sideload Compatibility**:
+   - **Objective**: Ensure modified and sideloaded APKMirror builds install, launch, and execute cleanly outside Google Play, withstand re-signing without client-side signature integrity failures, and prevent forced store updates from blocking application launch.
+   - **How**:
+     - **Signature Self-Query Spoofing (`com.excelliance.kxqp.util.g4.h`)**: `g4.h(Context)` reads `PackageManager.getPackageInfo(..., 64).signatures[0].toCharsString()` truncated to 128 characters. When repackaged and re-signed by Morphe or custom keystores, this query returns foreign signature strings. The method is replaced with `const-string v0, "$ORIGINAL_SIGNATURE_HEX_128"` returning the official ZhuoMeng release certificate prefix (`30820271308201daa0030201020204520332c2...`), ensuring signature consumers (`g4.g`, `mm.g`) receive the official certificate bytes.
+     - **Play Core In-App Update Gate Suppression (`com.excelliance.kxqp.util.jm.H`)**: `jm.H(Activity)` is the startup entrypoint called by `ih.e(Activity)` that queries Google Play's `IAppUpdateService` (`b5/*`). On sideloaded builds without Google Play services, update queries fail or trigger modal forced-update dialogs (`jm.K`) whose exit button calls `activity.finish()`. `jm.H(Activity)` is stubbed with `return-void`, neutralizing the launch update check.
+     - **Update Dialog Dispatcher Defense-in-Depth (`com.excelliance.kxqp.util.jm.t`)**: `jm.t(Activity, boolean)` builds and displays the blocking update dialog. It is stubbed with `return-void` as a secondary guard to prevent modal display if invoked from any alternative path.
+
+### D. Entitlement & Feature Flag Three-Yes Feasibility Evaluation
+
+| Method Signature | Location | Three-Yes Criteria Evaluation | Verdict |
+| :--- | :--- | :--- | :--- |
+| `Lp1/l;->B(Landroid/content/Context;)V` | `classes3.dex:181-196` | **Q1 (Local decision)**: NO. `p1.l` is `BiManager` (ByteDance AppLog analytics manager). Method `B` is a telemetry sink that compiles tracking parameters `Pair("is_vip", if (fn.f12512a.i(context)) "是" else "否")` and logs them via `AppLog.setHeaderInfo(...)`. It performs no authorization and gates no feature.<br>**Q2 (Local flow)**: NO. VIP entitlements (multi-account container quotas, cloud sync) require backend grant from `https://api.multispaces.net/`.<br>**Q3 (No credential/receipt forgery)**: NO. Forcing this flag would forge analytics state while remaining unentitled at the backend. | **FAILS (No / No / No)**<br>Status: `TRANSITIVELY_INERT` / `NOT_APPLICABLE`<br>Action: PRESERVED (no normalization). |
+| `Lp1/l;->w(Landroid/app/Application;)Ltd/j0;` | `classes3.dex:401-405` | **Q1 (Local decision)**: NO. Observer callback on `DataStore.M2()` that re-emits `"is_vip"` to `AppLog` when VIP status changes.<br>**Q2 (Local flow)**: NO. Server-authoritative VIP status.<br>**Q3 (No credential/receipt forgery)**: NO. Forges telemetry reporting. | **FAILS (No / No / No)**<br>Status: `TRANSITIVELY_INERT` / `NOT_APPLICABLE`<br>Action: PRESERVED (no normalization). |
+
+*VIP Architecture Note*:
+The true VIP evaluation in Multiple Accounts runs through `com.excelliance.kxqp.util.fn` (`VipManager.kt`) which delegates to native methods in `com.excelliance.kxqp.util.vf` (`vf.g`, `vf.b`, `vf.c`, etc.). These native methods verify subscription data populated by server login (`LoginResponse` via `c.x` in `SpUserInfo.kt`) and Google Play Billing receipt tokens. Client-side forgery of `fn` or `vf` would cause container desynchronization and backend API rejection (symptom index row 1: server-side authority). Consequently, VIP normalization is strictly out of scope per Three-Yes rule and repo invariants.
+
+### E. Comprehensive Compatibility Surface Audit Matrix
+
+| Surface Area | Hits (Total/Classes) | Representative Location | Classification | Rationale & Architectural Handling |
+| :--- | :--- | :--- | :--- | :--- |
+| **Re-signing tolerance** (`signature-check`) | 70 / 17 | `classes4.dex` `Lcom/excelliance/kxqp/util/g4;->h(Landroid/content/Context;)Ljava/lang/String;` | `NORMALIZED` | Single app-own signature query reading `signatures[0]`. Pinned to official ZhuoMeng release certificate hex to prevent foreign-key re-signing rejections. 69 other hits reside in AndroidX framework and disabled ad SDKs (`TRANSITIVELY_INERT`). |
+| **In-app update** (`update-gate`) | 3 / 3 | `classes4.dex` `Lcom/excelliance/kxqp/util/jm;->H(Landroid/app/Activity;)V` & `jm;->t(Landroid/app/Activity;Z)V` | `NORMALIZED` | Play Core `IAppUpdateService` query (`b5/*`) and modal update dialog (`jm.K`) stubbed with `return-void` to prevent launch blocks on sideloaded APKMirror installs lacking Play services. |
+| **Store navigation** (`store-redirect`) | 34 / 9 | `classes4.dex` `Lcom/excelliance/kxqp/util/nd;->f(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V` | `PRESERVED` | Single app-own store redirect (`market://details?id=`) in `MultiAppStatusUtil` is user-initiated when user taps "Install Now" for an uninstalled cloned host app. Preserved per Rule. 33 other hits are ad SDK click redirects (`TRANSITIVELY_INERT`). |
+| **Billing boundary** (`billing-boundary`) | 38 / 4 | `classes3.dex` `La2/a0;` (BillingClient wrapper), `AndroidManifest.xml` `ProxyBillingActivity`, `ProxyBillingActivityV2` | `PRESERVED` | Google Play Billing client wrappers and manifest activities strictly preserved unchanged without receipt forgery. |
+| **Feature flag / Entitlement** (`entitlement`) | 4 / 3 | `classes3.dex` `Lp1/l;->B` & `Lp1/l;->w` (`is_vip`), `classes5.dex` `AcquisitionType` | `NOT_APPLICABLE` | Evaluated under Three-Yes test: `p1.l` is a telemetry sink, not an access gate. Real VIP is server-authoritative (`LoginResponse`). Unity Ads enum is third-party metadata. |
+| **Installer identity** (`installer-check`) | 17 / 15 | `classes3.dex` `Lcom/applovin/impl/sdk/m;->a`, `classes5.dex` `Lcom/google/android/gms/measurement/internal/zzgi;->zzf` | `TRANSITIVELY_INERT` | 0 app-own installer checks. All 17 hits reside in third-party ad/analytics SDKs (AppLovin, Pangle, Google Measurement, IronSource, MBridge, Secmtp, Singular, Unity, AppMetrica) neutralized by telemetry patches. |
+| **Root & emulator detection** (`root-emulator`) | 55 / 16 | `classes3.dex` `Lcom/bytedance/sdk/openadsdk/utils/ls;->wai`, `classes6.dex` `Lcom/secmtp/sdk/core/common/vv/vu;-><clinit>` | `TRANSITIVELY_INERT` | 0 app-own root/emulator checks. Hits are in third-party ad SDKs or false-positive pattern matches (`java.time.d.FRIDAY`, `PatternsCompat`). Ordinary physical devices (Redmi Note 5) run unblocked. |
+| **Debugging detection** (`debug-check`) | 9 / 8 | `classes5.dex` `Lcom/ironsource/a;->run`, `classes8.dex` `Lio/appmetrica/analytics/impl/d;->run` | `TRANSITIVELY_INERT` | 0 app-own debug checks. All 9 hits belong to ad/measurement SDKs (IronSource, MBridge, AppMetrica, Pangle, Secmtp, Unity). |
+| **APK self-read** (`apk-self-read`) | 18 / 7 | `classes4.dex` `Lcom/excelliance/kxqp/util/dl;->w`, `classes9.dex` `Lcom/excelliance/kxqp/nat/b;->a` | `PRESERVED` | App-own `ApplicationInfo.sourceDir` references belong to the dual-space virtualization engine (reading host and guest APK file paths to clone components and resources). Preserved for container functionality. |
+| **Zero-hit anchors** (`login-gate`, `shared-user`, `pairip`, `licensing`, `integrity-api`) | 0 / 0 | N/A | `NOT_APPLICABLE` | Verified 0 hits across all DEX files and `AndroidManifest.xml` during reconnaissance sweep. No code required. |
+
 ---
 
 ## 4. Behavioral Hazards Warning
@@ -101,6 +136,12 @@ Multiple Accounts (2Accounts dual-space clone) is a virtualization container app
 
 4. **First-Party Behavioral Privacy & Guest Process Isolation**:
    Neutralizing clipboard snooping in `LinkUtils` stops attribution harvesting by the host application on launch. Cloned guest applications still possess direct platform clipboard access within their respective sandboxes according to standard Android permissions.
+
+5. **Re-Signing Tolerance & Host Signature Spoofing**:
+   `BaseGameUtil.h(Context)` (`g4.h`) is pinned to return the official ZhuoMeng release signature string. Cloned guest applications execute inside isolated sandbox containers and query their own package signatures through the container proxy, not `g4.h`. This hook affects only Multiple Accounts' own client self-verification and prevents runtime crashes when the host APK is signed with test keys.
+
+6. **Sideload Update Suppression vs Cloned App Store Navigation**:
+   Neutralizing `jm.H(Activity)` and `jm.t(Activity, boolean)` skips Play Core in-app update checks for Multiple Accounts itself. Conversely, `MultiAppStatusUtil.f` (`nd.f`) is intentionally preserved: if a user uninstalls a cloned app from the host Android system, Multiple Accounts prompts the user and allows opening the store to re-download the target app without breaking user-initiated recovery workflows.
 
 ---
 

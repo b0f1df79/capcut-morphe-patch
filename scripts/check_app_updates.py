@@ -168,6 +168,19 @@ APP_SPECS: List[Dict[str, Any]] = [
         "source_url": "https://apkpure.com/sube/com.sube.app",
         "allow_beta": False,
     },
+    # --------------------------------------------------------------------------
+    # SD Maid SE (APKPure) - copy-paste-filled from "ADD NEW APP HERE" template
+    # --------------------------------------------------------------------------
+    {
+        "id": "sdmse",
+        "name": "SD Maid SE",
+        "package_name": "eu.darken.sdmse",
+        "constant_key": "SDMSE_TARGET_VERSION",
+        "source_type": "apkpure",
+        "source_name": "APKPure",
+        "source_url": "https://apkpure.com/sd-maid-2-se-system-cleaner/eu.darken.sdmse",
+        "allow_beta": True,
+    },
 ]
 
 
@@ -647,6 +660,24 @@ class TestUpdateChecker(unittest.TestCase):
         """
         ver = extract_apkpure_version(fixture_html)
         self.assertEqual(ver, "2.8.0")
+
+    def test_apkpure_extraction_sdmse(self) -> None:
+        """Verify APKPure extracts SD Maid SE downloadable version from download button."""
+        fixture_html = """
+        <html>
+          <body>
+            <a class="btn normal-download-btn da dt-main-download-btn"
+               data-dt-package_name="eu.darken.sdmse"
+               data-dt-version="2.2.1-rc0"
+               href="https://apkpure.com/sd-maid-2-se-system-cleaner/eu.darken.sdmse/download"
+               title="Download SD Maid 2/SE latest version apk">
+              <strong class="text one-line">Download APK (22.5 MB)</strong>
+            </a>
+          </body>
+        </html>
+        """
+        ver = extract_apkpure_version(fixture_html)
+        self.assertEqual(ver, "2.2.1-rc0")
 
     def test_apkpure_download_link_beats_metadata(self) -> None:
         """Download-link version must take precedence over contradictory metadata."""

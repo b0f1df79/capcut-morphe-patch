@@ -20,6 +20,9 @@ import app.morphe.patches.shared.replaceWithReturnVoid
 import app.morphe.patches.shared.setApplicationMetaData
 import app.morphe.patches.shared.stripPermissionsWhere
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.Method
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.StringReference
@@ -365,6 +368,19 @@ private fun applyHostsRewrites(method: MutableMethod, rewrites: List<PendingHost
     }
 }
 
+private fun hasBlockedHostLiteral(instruction: Instruction, blockedHosts: Set<String>): Boolean {
+    val opcode = instruction.opcode
+    if (opcode != Opcode.CONST_STRING && opcode != Opcode.CONST_STRING_JUMBO) return false
+    val ref = (instruction as? ReferenceInstruction)?.reference as? StringReference ?: return false
+    return buildRewriteLiteral(ref.string, blockedHosts) != null
+}
+
+private fun hasBlockedHostLiteral(method: Method, blockedHosts: Set<String>): Boolean =
+    method.implementation?.instructions?.any { hasBlockedHostLiteral(it, blockedHosts) } == true
+
+private fun hasBlockedHostLiteral(classDef: ClassDef, blockedHosts: Set<String>): Boolean =
+    classDef.methods.any { hasBlockedHostLiteral(it, blockedHosts) }
+
 private data class HostRewriteStats(
     val rewrittenStrings: Int,
     val ruleCounts: Map<String, Int>,
@@ -380,6 +396,7 @@ private fun BytecodePatchContext.blockHostsInDex(
 
     classDefForEach { classDef ->
         if (predicate != null && !predicate(classDef.type)) return@classDefForEach
+        if (!hasBlockedHostLiteral(classDef, blockedHosts)) return@classDefForEach
 
         val mutableClass = mutableClassDefBy(classDef)
         var classModified = false
@@ -486,7 +503,7 @@ val officeHubBlockTelemetryPatch = bytecodePatch(
         // Pass 1: Scoped pass for default telemetry endpoints within telemetry package prefixes
         val defaultStats = blockHostsInDex(DEFAULT_BLOCKED_HOSTS, touchedClassTypes) { isTelemetryCandidateClass(it) }
 
-        // Pass 2: Unscoped pass for user-supplied custom blocked hosts across all classes
+        // Pass 2: Unscoped pass for user-supplied custom blocked hosts (scans all classes; only matching classes are mutated)
         val customStats = if (distinctUserHosts.isNotEmpty()) {
             blockHostsInDex(distinctUserHosts.toSet(), touchedClassTypes, predicate = null)
         } else {

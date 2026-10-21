@@ -498,7 +498,7 @@ val multiaccountsTelemetryPatch = bytecodePatch(
             }
             if (initCallbackMethod != null && initCallbackMethod.implementation != null) {
                 initCallbackMethod.clearTryBlocks()
-                initCallbackMethod.implementation?.let { it.removeInstructions(0, it.instructions.count()) }
+                initCallbackMethod.implementation?.let { removeInstructions(0, it.instructions.count()) }
                 initCallbackMethod.addInstructions(
                     0,
                     """

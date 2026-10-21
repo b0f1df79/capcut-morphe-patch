@@ -40,7 +40,7 @@ APP_SPECS: List[Dict[str, Any]] = [
     #     "source_name": "APKPure",                 # 6. Display name of upstream host, must match the entry's source
     #     "source_url": "https://apkpure.com/slug/com.example.app",  # 7. Canonical listing URL (HTTP 200 verified live)
     #     "allow_beta": False,                      # Pre-release filter (typically False for stable patch releases)
-    #     # Optional keys: "path_prefix" (required for apkmirror; release- vs directory-level prefix both work), "run_patch_test_id" (defaults to id); no entry uses require_variant_marker (mechanism absent in this copy)
+    #     # Optional keys: "path_prefix" (required for apkmirror; release- vs directory-level prefix both work), "run_patch_test_id" (defaults to id), "version_ignore_patterns" (regex list to skip abandoned lines); no entry uses require_variant_marker (mechanism absent in this copy)
     # },
     # ==============================================================================
     {
@@ -145,6 +145,7 @@ APP_SPECS: List[Dict[str, Any]] = [
         "source_name": "APKPure",
         "source_url": "https://apkpure.com/xiaomi-earbuds/com.mi.earphone",
         "allow_beta": False,
+        "version_ignore_patterns": [r"^9\."],
     },
     # --------------------------------------------------------------------------
     # SUBE (APKPure) - copy-paste-filled from "ADD NEW APP HERE" template
@@ -313,6 +314,13 @@ def compare_versions(local_ver: str, remote_ver: str) -> str:
         return "update-available"
 
     return "current"
+
+
+def is_version_ignored(version: str, patterns: Optional[List[str]]) -> bool:
+    """Check if version matches any ignore regex pattern."""
+    if not version or not patterns:
+        return False
+    return any(re.search(pat, version) for pat in patterns)
 
 
 def fetch_html(url: str) -> Optional[str]:
@@ -534,6 +542,10 @@ def run_update_checks(
                 remote_version = extract_apkpure_version(html)
             elif source_type == "github":
                 remote_version = extract_github_version(html, allow_beta=allow_beta)
+
+        ignore_patterns = spec.get("version_ignore_patterns")
+        if remote_version and is_version_ignored(remote_version, ignore_patterns):
+            remote_version = None
 
         if not remote_version:
             status = "unknown"
@@ -870,6 +882,79 @@ class TestUpdateChecker(unittest.TestCase):
             for entry in unknown_results:
                 self.assertEqual(entry["status"], "unknown")
                 self.assertEqual(entry["remote_version"], "unknown")
+
+    def test_xiaomi_earbuds_phantom_update_ignored(self) -> None:
+        """Verify abandoned 9.x branch is ignored and does not report update-available for Xiaomi Earbuds."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            temp_constants = Path(tmpdir) / "Constants.kt"
+            constants_content = resolve_default_constants_path().read_text(encoding="utf-8")
+            temp_constants.write_text(constants_content, encoding="utf-8")
+
+            phantom_html = """
+            <html>
+              <body>
+                <a class="btn normal-download-btn da dt-main-download-btn"
+                   data-dt-package_name="com.mi.earphone"
+                   data-dt-version="9.0.278"
+                   href="https://apkpure.com/xiaomi-earbuds/com.mi.earphone/download"
+                   title="Download Xiaomi Earbuds latest version apk">
+                  <strong class="text one-line">Download APK (20 MB)</strong>
+                </a>
+              </body>
+            </html>
+            """
+
+            def fake_fetch(url: str) -> Optional[str]:
+                if "com.mi.earphone" in url:
+                    return phantom_html
+                return None
+
+            results = run_update_checks(temp_constants, fetch_fn=fake_fetch)
+            xiaomi_entry = next(r for r in results if r["id"] == "xiaomi-earbuds")
+            self.assertEqual(xiaomi_entry["local_version"], "1.38.0i")
+            self.assertNotEqual(
+                xiaomi_entry["status"],
+                "update-available",
+                "Phantom update 9.0.278 must NOT report update-available",
+            )
+            self.assertEqual(xiaomi_entry["status"], "unknown")
+            self.assertEqual(xiaomi_entry["remote_version"], "unknown")
+
+            # Live 1.x update must still report update-available
+            live_html = """
+            <html>
+              <body>
+                <a class="btn normal-download-btn da dt-main-download-btn"
+                   data-dt-package_name="com.mi.earphone"
+                   data-dt-version="1.39.0"
+                   href="https://apkpure.com/xiaomi-earbuds/com.mi.earphone/download"
+                   title="Download Xiaomi Earbuds latest version apk">
+                  <strong class="text one-line">Download APK (20 MB)</strong>
+                </a>
+              </body>
+            </html>
+            """
+
+            def fake_fetch_live(url: str) -> Optional[str]:
+                if "com.mi.earphone" in url:
+                    return live_html
+                return None
+
+            live_results = run_update_checks(temp_constants, fetch_fn=fake_fetch_live)
+            xiaomi_live = next(r for r in live_results if r["id"] == "xiaomi-earbuds")
+            self.assertEqual(xiaomi_live["status"], "update-available")
+            self.assertEqual(xiaomi_live["remote_version"], "1.39.0")
+
+    def test_is_version_ignored(self) -> None:
+        """Verify version ignore pattern matching."""
+        self.assertTrue(is_version_ignored("9.0.278", [r"^9\."]))
+        self.assertTrue(is_version_ignored("9.1.0", [r"^9\."]))
+        self.assertFalse(is_version_ignored("1.38.0i", [r"^9\."]))
+        self.assertFalse(is_version_ignored("1.39.0", [r"^9\."]))
+        self.assertFalse(is_version_ignored("9.0.278", []))
+        self.assertFalse(is_version_ignored("9.0.278", None))
+        self.assertFalse(is_version_ignored("", [r"^9\."]))
+
 
 
 def main() -> int:

@@ -27,6 +27,7 @@ Technical documentation and patch catalog for Multiple Accounts (com.excelliance
 | **Multiaccounts Privacy Setup** | `resourcePatch` | `false` (Opt-in) | None | Configures network_security_config.xml to trust user CA certificates for TLS inspection while preserving cleartext traffic. |
 | **Privacy Controls** | `bytecodePatch` | `false` (Opt-in) | `Multiaccounts Privacy Setup` | Neutralizes clipboard snooping in ByteDance AppLog attribution and disables OkHttp certificate pinning for network traffic auditing. |
 | **Sideload Compatibility** | `bytecodePatch` | `true` (Enabled) | None | Ensures compatibility for sideloaded installations by spoofing the official APK signature certificate for self-verification and neutralizing launch-blocking Google Play in-app update checks. |
+| **UX Declutter** | `bytecodePatch` | `true` (Enabled) | None | Removes splash delays, short-circuits cloned-app launch ad gates, hides main screen promo banners, and suppresses rating prompts. |
 
 ---
 
@@ -118,6 +119,23 @@ The true VIP evaluation in Multiple Accounts runs through `com.excelliance.kxqp.
 | **APK self-read** (`apk-self-read`) | 18 / 7 | `classes4.dex` `Lcom/excelliance/kxqp/util/dl;->w`, `classes9.dex` `Lcom/excelliance/kxqp/nat/b;->a` | `PRESERVED` | App-own `ApplicationInfo.sourceDir` references belong to the dual-space virtualization engine (reading host and guest APK file paths to clone components and resources). Preserved for container functionality. |
 | **Zero-hit anchors** (`login-gate`, `shared-user`, `pairip`, `licensing`, `integrity-api`) | 0 / 0 | N/A | `NOT_APPLICABLE` | Verified 0 hits across all DEX files and `AndroidManifest.xml` during reconnaissance sweep. No code required. |
 
+### F. UX Declutter Layer (`bytecodePatch`)
+
+1. **UX Declutter**:
+   - **Objective**: Eliminate artificial cold-start delays, ad gating stalls, native promotional banners, rating prompts, and first-run consent dialogs without compromising guest container execution lifecycles, push notifications, or Google Play billing.
+   - **How**:
+     - **Splash Delay Cut (`dhy60gm84keol.u()V`)**: Launcher activity posted a 1000ms delay timer via `ml.s` before calling `dhy60gm84keol.v(p0)` to launch `cdp45zj40leka` and finish self. Replaced with immediate static invocation `dhy60gm84keol.v(p0)` followed by `return-void` (`REMOVED_DELAY`).
+     - **Cloned-App Launch Acceleration (`i1.v1.k0`)**: `AppStartUtil` (`m1.java:541`) invokes `k0(Activity, int, Function0)` when launching guest applications. Instead of initiating splash ad mediation or network stalls, `k0` immediately invokes `onNext.invoke()`, guaranteeing instant clone launch without ad gating (`REMOVED_DELAY`).
+     - **Main Screen Splash Gate (`i1.v1.n0`)**: `zoi77gy37zzof.I0()` initializes the main fragment workspace via `v1.n0(Context, Function0, Function0, Function0)`. Hooked to immediately invoke `onNext.invoke()`, directly triggering `zoi77gy37zzof.J0 -> H0()` (`REMOVED_DELAY`).
+     - **Global Ad Gate Short-Circuit (`DataStore.O1()Z`)**: Forces `canRequestAds` to return `false` (`replaceWithReturnBoolean(false)`). Bypasses ad loading in `AdManagerOfSplash.e0()` (which immediately calls `g0(onNext, activity)`) and suppresses ad prefetching across `i1.k`, `i1.v1`, `i1.c4`, and `qj` (`SKIPPED`).
+     - **Rating & Review Prompt Suppression (`j9.o(Activity)Z`)**: Suppresses 5-star rating dialog builder (`dialog_grade`) triggered from home screen interactions by returning `false` (`SKIPPED`).
+     - **Native Promo Banner Elimination (`NativeBanner`)**: Embedded in `zoi77gy37zzof` (`R.id.nativeBanner`). Method `m(Z)V` forced to set `View.GONE` (`0x8`). Data ingestion methods `l(List)V` and `z(List)V`, along with auto-switch routines `s()V`, `t()V`, and `u()V`, are stubbed with `return-void` (`SKIPPED`).
+     - **First-Run Privacy Consent Wizard Bypass (`tg.d`)**: `com.excelliance.kxqp.util.tg.d(Context, tg$a)` displays `dialog_privacy_413`. Hooked to immediately invoke `callback.b()`, replicating the state where privacy consent was previously accepted (`SKIPPED`).
+     - **Transitively Dead Surfaces**:
+       - `com.verve.ng.sdk.interstitial.activity.MraidInterstitialActivity` & `VastInterstitialActivity`: Disabled in manifest by telemetry patch (`BLOCKED_ACTIVITIES`), 0 first-party invocations (`TRANSITIVELY_DEAD`).
+       - `com.excelliance.kxqp.ads.topon.TopOnAdSplashActivity` & `ApiAdSplashActivity`: Disabled in manifest by telemetry patch (`BLOCKED_ACTIVITIES`), and invocation routes via `AdManagerOfSplash` neutralized (`TRANSITIVELY_DEAD`).
+
+
 ---
 
 ## 4. Behavioral Hazards Warning
@@ -142,6 +160,9 @@ The true VIP evaluation in Multiple Accounts runs through `com.excelliance.kxqp.
 
 6. **Sideload Update Suppression vs Cloned App Store Navigation**:
    Neutralizing `jm.H(Activity)` and `jm.t(Activity, boolean)` skips Play Core in-app update checks for Multiple Accounts itself. Conversely, `MultiAppStatusUtil.f` (`nd.f`) is intentionally preserved: if a user uninstalls a cloned app from the host Android system, Multiple Accounts prompts the user and allows opening the store to re-download the target app without breaking user-initiated recovery workflows.
+
+7. **Asynchronous Callback Invocation Invariant in Ad Gates**:
+   Methods accepting completion callbacks (specifically `v1.k0(Activity, int, Function0)`, `v1.n0(Context, Function0, Function0, Function0)`, and `tg.d(Context, tg$a)`) MUST NEVER be stubbed with `return-void`. Doing so permanently hangs UI transitions, halts cold-start loading, or prevents cloned applications from ever launching. The declutter implementation strictly invokes the completion callback (`invoke-interface`) before returning `void`.
 
 ---
 

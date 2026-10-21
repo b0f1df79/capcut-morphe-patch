@@ -398,6 +398,24 @@ private val SDK_HOOK_FAMILIES = listOf(
             TargetMethod("setAdRevenue", listOf("Lorg/json/JSONObject;")),
         ),
     ),
+    SdkHookFamily(
+        definingClass = "Lcom/tiktok/TikTokBusinessSdk;",
+        label = "TikTok Business SDK",
+        methods = listOf(
+            TargetMethod("initializeSdk", listOf("Lcom/tiktok/TikTokBusinessSdk\$TTConfig;")),
+            TargetMethod("startTrack", emptyList()),
+            TargetMethod("trackTTEvent", listOf("Lcom/tiktok/appevents/base/TTBaseEvent;")),
+            TargetMethod("trackTTEvent", listOf("Lcom/tiktok/appevents/base/EventName;")),
+            TargetMethod("trackTTEvent", listOf("Lcom/tiktok/appevents/base/EventName;", "Ljava/lang/String;")),
+            TargetMethod("trackEvent", listOf("Ljava/lang/String;")),
+            TargetMethod("trackEvent", listOf("Ljava/lang/String;", "Ljava/lang/String;")),
+            TargetMethod("trackEvent", listOf("Ljava/lang/String;", "Lorg/json/JSONObject;")),
+            TargetMethod("trackEvent", listOf("Ljava/lang/String;", "Lorg/json/JSONObject;", "Ljava/lang/String;")),
+            TargetMethod("trackGooglePlayPurchase", listOf("Lcom/tiktok/appevents/TTPurchaseInfo;")),
+            TargetMethod("trackGooglePlayPurchase", listOf("Ljava/util/List;")),
+            TargetMethod("flush", emptyList()),
+        ),
+    ),
 )
 
 // String-anchored fingerprints for host rewrites in obfuscated OkHttp DoH and analytics classes

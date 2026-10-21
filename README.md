@@ -372,7 +372,6 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | X | [Guide](docs/apps/twitter.md) |
 | Moovit | [Guide](docs/apps/moovit.md) |
 | PowerPoint | [Guide](docs/apps/powerpoint.md) |
-| Lightroom | [Guide](docs/apps/lrmobile.md) |
 | CapCut | [Guide](docs/apps/capcut.md) |
 | Copilot | [Guide](docs/apps/officehub.md) |
 | Hevy | [Guide](docs/apps/hevy.md) |

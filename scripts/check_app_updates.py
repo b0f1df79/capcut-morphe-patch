@@ -92,17 +92,6 @@ APP_SPECS: List[Dict[str, Any]] = [
         "allow_beta": False,
     },
     {
-        "id": "lrmobile",
-        "name": "Lightroom",
-        "package_name": "com.adobe.lrmobile",
-        "constant_key": "LRMOBILE_TARGET_VERSION",
-        "run_patch_test_id": "lrmobile",
-        "source_type": "uptodown",
-        "source_name": "Uptodown",
-        "source_url": "https://adobe-lightroom-mobile.en.uptodown.com/android",
-        "allow_beta": False,
-    },
-    {
         "id": "capcut",
         "name": "CapCut",
         "package_name": "com.lemon.lvoverseas",

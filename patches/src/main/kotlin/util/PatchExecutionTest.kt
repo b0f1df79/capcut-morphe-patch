@@ -85,17 +85,6 @@ enum class TargetApp(
         patchDirectoryPart = "powerpoint",
         referenceSha256 = Constants.POWERPOINT_INPUT_SHA256,
     ),
-    LRMOBILE(
-        id = "lrmobile",
-        appName = "Lightroom",
-        packageName = Constants.LRMOBILE_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "lrmobile_${Constants.LRMOBILE_TARGET_VERSION}.apk"
-        ),
-        filePattern = Regex("(?i).*(?:lrmobile|lightroom).*\\.apk$"),
-        patchDirectoryPart = "lrmobile",
-        referenceSha256 = Constants.LRMOBILE_INPUT_SHA256,
-    ),
     CAPCUT(
         id = "capcut",
         appName = "CapCut",

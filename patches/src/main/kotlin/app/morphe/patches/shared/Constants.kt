@@ -99,23 +99,6 @@ object Constants {
         )
     )
 
-    const val LRMOBILE_PACKAGE_NAME = "com.adobe.lrmobile"
-    const val LRMOBILE_TARGET_VERSION = "11.6.01"
-    const val LRMOBILE_INPUT_SHA256 = "292dc10e127bf2ecaf99a32ddc1d4d87308c3e79e4c640fb33ec80522affaf52"
-
-    val COMPATIBILITY_LRMOBILE = Compatibility(
-        name = "Lightroom",
-        packageName = LRMOBILE_PACKAGE_NAME,
-        apkFileType = ApkFileType.APK,
-        appIconColor = 0x001C34,
-        targets = listOf(
-            AppTarget(
-                version = LRMOBILE_TARGET_VERSION,
-                description = "Download com.adobe.lrmobile v$LRMOBILE_TARGET_VERSION (APK) arm64-v8a nodpi from Uptodown",
-            )
-        )
-    )
-
     const val CAPCUT_PACKAGE_NAME = "com.lemon.lvoverseas"
     const val CAPCUT_TARGET_VERSION = "19.8.0"
     const val CAPCUT_INPUT_SHA256 = "68a92fb7a06b29e95d791739650709d0dd7a23ed764174ca21797af4662faa4b"

@@ -28,6 +28,8 @@ Technical documentation and patch catalog for Multiple Accounts (com.excelliance
 | **Privacy Controls** | `bytecodePatch` | `false` (Opt-in) | `Multiaccounts Privacy Setup` | Neutralizes clipboard snooping in ByteDance AppLog attribution and disables OkHttp certificate pinning for network traffic auditing. |
 | **Sideload Compatibility** | `bytecodePatch` | `true` (Enabled) | None | Ensures compatibility for sideloaded installations by spoofing the official APK signature certificate for self-verification and neutralizing launch-blocking Google Play in-app update checks. |
 | **UX Declutter** | `bytecodePatch` | `true` (Enabled) | None | Removes splash delays, short-circuits cloned-app launch ad gates, hides main screen promo banners, and suppresses rating prompts. |
+| **Multiaccounts Debloat (Setup)** | `resourcePatch` | `false` (Opt-in) | None | Disables non-functional ad-network WorkManager services and receivers, removes WorkManagerInitializer startup metadata, and strips RECEIVE_BOOT_COMPLETED in AndroidManifest.xml while strictly preserving clone container services. |
+| **Stop Background Wakeups** | `bytecodePatch` | `false` (Opt-in) | `Multiaccounts Debloat (Setup)` | Neutralizes ad-SDK WorkManager background task execution to eliminate background wakeups and battery drain. Container virtualization processes, push notifications, and clone keep-alive services are strictly preserved. |
 
 ---
 
@@ -135,6 +137,22 @@ The true VIP evaluation in Multiple Accounts runs through `com.excelliance.kxqp.
        - `com.verve.ng.sdk.interstitial.activity.MraidInterstitialActivity` & `VastInterstitialActivity`: Disabled in manifest by telemetry patch (`BLOCKED_ACTIVITIES`), 0 first-party invocations (`TRANSITIVELY_DEAD`).
        - `com.excelliance.kxqp.ads.topon.TopOnAdSplashActivity` & `ApiAdSplashActivity`: Disabled in manifest by telemetry patch (`BLOCKED_ACTIVITIES`), and invocation routes via `AdManagerOfSplash` neutralized (`TRANSITIVELY_DEAD`).
 
+### G. Background Wakeup Elimination Layer (`resourcePatch` + `bytecodePatch`)
+
+1. **Multiaccounts Debloat (Setup)**:
+   - **Objective**: Prevent background boot wakeups and periodic task scheduling triggered by third-party ad SDK WorkManager services and receivers in `AndroidManifest.xml`.
+   - **How**:
+     - **Permissions**: Strips `android.permission.RECEIVE_BOOT_COMPLETED` (line 89) to eliminate device reboot wakeups.
+     - **Services (3 disabled)**: Disables `androidx.work.impl.background.systemalarm.SystemAlarmService`, `androidx.work.impl.background.systemjob.SystemJobService`, and `androidx.work.impl.foreground.SystemForegroundService` (lines 6010-6025).
+     - **Receivers (8 disabled)**: Disables `androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver`, `androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy`, `ConstraintProxy$BatteryNotLowProxy`, `ConstraintProxy$StorageNotLowProxy`, `ConstraintProxy$NetworkStateProxy`, `RescheduleReceiver`, `ConstraintProxyUpdateReceiver`, and `DiagnosticsReceiver` (lines 6026-6097).
+     - **Startup Initializer**: Removes `androidx.work.WorkManagerInitializer` `<meta-data>` entry from `androidx.startup.InitializationProvider` (line 5916).
+     - **Preservation**: Strictly preserves `android.permission.WAKE_LOCK` (line 13), `com.excelliance.kxqp.platform.TrampolineService` (and `:lbcore` isolated process companions `EmptyService`, `JobProxyService`, `NotificationListenerService`, `TrampolineReceiver`, `TrampolineProvider`), `com.excelliance.kxqp.SmtServService` (foregroundServiceType `0x40000000`, lines 625-628), and all guest proxy services/receivers (`com.excelliance.kxqp.platform.proxy.*`) across all plugin slots (P00-P09).
+
+2. **Stop Background Wakeups**:
+   - **Objective**: Neutralize WorkManager runtime initialization in Dalvik bytecode, ensuring that any surviving startup code returns immediately without initializing schedulers or background databases.
+   - **How**:
+     - **Bytecode Stubs**: Stubs `Landroidx/work/WorkManagerInitializer;->create(Landroid/content/Context;)Landroidx/work/WorkManager;` (method@2955) and its synthetic bridge `create(Landroid/content/Context;)Ljava/lang/Object;` with `replaceWithReturnNull()`, returning `null` immediately.
+     - **Eliminated Ad-SDK Workers**: Neutralizes Google Ads offline buffering workers (`com.google.android.gms.ads.internal.offline.buffering.OfflineNotificationPoster`, `OfflinePingSender`) and Unity Ads background job (`com.unity3d.ads.core.domain.work.UniversalRequestJob`), which are the only WorkManager workers registered in the APK.
 
 ---
 
@@ -164,8 +182,22 @@ The true VIP evaluation in Multiple Accounts runs through `com.excelliance.kxqp.
 7. **Asynchronous Callback Invocation Invariant in Ad Gates**:
    Methods accepting completion callbacks (specifically `v1.k0(Activity, int, Function0)`, `v1.n0(Context, Function0, Function0, Function0)`, and `tg.d(Context, tg$a)`) MUST NEVER be stubbed with `return-void`. Doing so permanently hangs UI transitions, halts cold-start loading, or prevents cloned applications from ever launching. The declutter implementation strictly invokes the completion callback (`invoke-interface`) before returning `void`.
 
+8. **Container Virtualization & Background Service Preservation**:
+   Multiple Accounts relies on foreground services (`SmtServService`, `foregroundServiceType 0x40000000`) and the `:lbcore` isolated process (`TrampolineService`, `JobProxyService`, `NotificationListenerService`) for clone process lifecycles, keep-alive, IPC proxying, and push notification routing to cloned applications. These components must never be stripped or disabled. WorkManager is exclusively leveraged by ad networks (Google Ads offline buffering, Unity Ads UniversalRequestJob) and is safely neutralized without affecting the virtualization container.
+
 ---
 
 ## 5. Canonical Universal Patches
 
-Generic resource slimming and device optimization patches are provided by universal patches in the canonical collection [kveld-morphe-patches](https://github.com/kveld9/kveld-morphe-patches): `Remove Unused Screen Sizes` and `Remove Extra Languages`. Add that source in Morphe Manager alongside this one to use them.
+Generic resource slimming and device optimization patches are provided by universal patches in the canonical collection [kveld-morphe-patches](https://github.com/kveld9/kveld-morphe-patches). Comprehensive status of universal patches for Multiple Accounts (v5.8.2):
+
+| Universal Patch / Debloat Axis | Classification | Status & Concrete Technical Rationale |
+| :--- | :--- | :--- |
+| **Remove Extra Languages** (`LocaleResourceSlimmerPatch`) | `UNIVERSAL_OK` | Standard Android resource tables with 11 language qualifiers (`th`, `hi`, `vi`, `in`, `ko`, `ar`, `fr`, `tr`, `es`, `pt`, `ru` + default English) decoded to standard `res/values-*/` and localized drawable directories; cleanly stripped by universal patch. |
+| **Remove Unused Screen Sizes** (`DpiResourceSlimmerPatch`) | `UNIVERSAL_OK` | Standalone nodpi APK with standard density buckets (`ldpi`, `mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`); launcher icons `@mipmap/ic_launcher` and `nodpi`/`anydpi` assets are safely protected by universal patch. |
+| **ApkJunkCleaner** (`ApkJunkCleanerPatch`) | `UNIVERSAL_OK` | `DebugProbesKt.bin` at APK root is pruned by universal patch; `kotlin/*.kotlin_builtins` (9 files) are load-bearing runtime compiler descriptors used by `kotlin-reflect` (`lg.a.q:(Lwf/c;)Ljava/lang/String;` in classes8.dex) and are strictly preserved (`PRESERVED_FUNCTIONAL`). |
+| **Stop Background Wakeups** (`BackgroundSyncPurgePatch`) | `DEDICATED_NEEDED` | Universal `BackgroundSyncPurgePatch` does not prune `androidx.work.WorkManagerInitializer` from `androidx.startup.InitializationProvider` in `AndroidManifest.xml` (line 5916) and does not stub `WorkManagerInitializer.create` in Dalvik bytecode. Multiple Accounts also requires strict preservation of clone container services (`TrampolineService`, `SmtServService`) and `WAKE_LOCK`. Implemented via dedicated patch `Stop Background Wakeups`. |
+| **Shrink PNG Images** (`PngOptimizerPatch`) | `UNIVERSAL_OK` | Standard PNG raster drawables in `res/` and `assets/`; chunk CRC validation and 9-patch preservation handled by universal patch. |
+| **Shrink WebP Images** (`UniversalWebpOptimizerPatch`) | `UNIVERSAL_OK` | Standard WebP images (10 files); EXIF/XMP/ICCP metadata stripping and VP8X flag synchronization handled by universal patch. |
+| **Remove Tracking Code** (native `.so` trimmer) | `NOT_APPLICABLE` | All 13 `.so` files in `lib/arm64-v8a/` have >=1 load-bearing reference or dynamic loader dependency across fused base DEX; zeroing is forbidden to prevent `UnsatisfiedLinkError` boot crashes (`PRESERVED_FUNCTIONAL`). |
+| **Tutorial Videos / Editor Stickers** | `NOT_APPLICABLE` | No media assets present (`res/raw` is absent; `assets/supplierconfig.json` is 136 bytes negligible). No patch authored. |

@@ -155,7 +155,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 
 **Supported versions:**
 
-| 19.8.0 |
+| 19.9.0 |
 | :---: |
 
 | Patch | Description | Options |

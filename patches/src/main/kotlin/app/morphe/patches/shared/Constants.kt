@@ -134,7 +134,7 @@ object Constants {
     )
 
     const val HEVY_PACKAGE_NAME = "com.hevy"
-    const val HEVY_TARGET_VERSION = "3.1.14"
+    const val HEVY_TARGET_VERSION = "3.2.2"
     const val HEVY_INPUT_SHA256 = ""
 
     val COMPATIBILITY_HEVY = Compatibility(

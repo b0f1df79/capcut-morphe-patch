@@ -260,7 +260,6 @@ private fun BytecodePatchContext.hookAppsFlyer(
                 val targetClass = ref.definingClass
                 if (targetClass != analyticsClassType &&
                     (targetClass.startsWith("Lcom/appsflyer/") ||
-                        targetClass.startsWith("Lcom/vega/") ||
                         targetClass.contains("AppsFlyer", ignoreCase = true))
                 ) {
                     hookAppsFlyerDelegate(ref, hookedMethods, hookedSignatures)

@@ -1,3 +1,12 @@
+## [1.26.2](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.26.1...v1.26.2) (2026-10-24)
+
+### Bug Fixes
+
+* **capcut:** block APM, Gecko, Pitaya and BDTuring telemetry dispatchers ([70c7e5d](https://github.com/kveld9/kveld-extra-morphe-patches/commit/70c7e5d3d51343bb9e30ca744b7f2afedaab94cb))
+* **capcut:** restore Add-to-editor flow when starting a new project ([513dc82](https://github.com/kveld9/kveld-extra-morphe-patches/commit/513dc823c727c6d1b661849dbb4d785cbc703618))
+* **capcut:** stub Pangle PGL signature verification gates ([951ac52](https://github.com/kveld9/kveld-extra-morphe-patches/commit/951ac52526b33aef2119730d57842060897398c6))
+* **capcut:** suppress default ending outro on export ([d321f89](https://github.com/kveld9/kveld-extra-morphe-patches/commit/d321f893f4e5d2f7873aa56129da6f5f36676fac))
+
 ## [1.26.1](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.26.0...v1.26.1) (2026-10-22)
 
 ### Bug Fixes

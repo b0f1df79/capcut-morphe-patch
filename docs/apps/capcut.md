@@ -34,6 +34,7 @@ Technical documentation and patch catalog for CapCut on Android.
 | **Remove Watermark** | `bytecodePatch` | `true` (Enabled) | None | Forces watermark-removal gates and the default ending gate to allow export without watermark or outro. |
 | **Unlock Ultra HD Export** | `bytecodePatch` | `true` (Enabled) | None | Enables Ultra HD and 4K video export options by unlocking high-resolution export eligibility gates. |
 | **Unlock Premium Templates** | `bytecodePatch` | `true` (Enabled) | None | Marks premium template styles as available so locked template features stay usable. |
+| **Redirect API to v2 Boot** | `bytecodePatch` | `false` (Opt-in) | None | Loads effects, feeds and templates where default endpoints are blocked by using official alternate endpoints. |
 
 ---
 
@@ -83,6 +84,10 @@ Technical documentation and patch catalog for CapCut on Android.
    - **Objective**: Keep locked premium template styles and features usable in the template editor.
    - **How**: Overrides template purchase feature flags in the template view-model, forcing access and style availability gates to return true while disabling purchase restrictions.
 
+10. **Redirect API to v2 Boot**:
+    - **Objective**: Restore loading of effects, templates, feeds, and commerce/passport features in regions where default API hosts return choking or rate-limiting responses ("Too many people are using this feature now. Try again later").
+    - **How**: Performs client-side bytecode const-string rewrites on candidate methods across the DEX string pool, mapping verified functional hosts (`editor-api.capcutapi.com`, `feed-api.capcutapi.com`, `commerce-api.capcutapi.com`, `passport-api.capcutapi.com`) to official alternate v2-boot hosts (`editor-api-v2-boot.capcutapi.com`, `feed-api-v2-boot.capcutapi.com`, `commerce-api-v2-boot.capcutapi.com`, `passport-api-v2-boot.capcutapi.com`). Note: both `editor-api.capcut.com` and `i18n-api.faceueditor.com` were pruned per Rule R2 as their 2 occurrences each in classes20.dex are non-executable pool entries rather than rewritable bytecode const-strings (all active editor endpoints use `editor-api.capcutapi.com`). Telemetry and tracker hosts (APM/Slardar `mon.*`, Gecko `*gecko*`, AppLog `log.*` / `i.*`, BDTuring `vcs-*`, Pitaya, UserGrowth) are strictly excluded from redirection because their dispatchers are already neutralized in Block Telemetry & Trackers and must remain inactive.
+
 ### C. Resource and Binary Debloat Axes
 
 1. **Locale Assets Slimmer (`resourcePatch`)**:
@@ -98,7 +103,7 @@ Technical documentation and patch catalog for CapCut on Android.
 ## 4. Behavioral Hazards Warning
 
 1. **Opt-in Status**:
-   Telemetry and resource slimmer patches are opt-in and disabled by default.
+   Telemetry, resource slimmer, and API v2-boot redirection patches are opt-in and disabled by default.
 2. **Locale Assets Slimmer**:
    Asset language bundles for stripped languages will fall back to English. res/values-* tables are untouched by this patch.
 3. **Native Bloat Slimmer**:
@@ -114,6 +119,8 @@ Technical documentation and patch catalog for CapCut on Android.
    The unsafe package modal dialog render and its verdict persistence are stubbed, so the blocking notice cannot display even when remote verdicts evaluate. Server-refused content (Templates catalog) may still fail to load.
 3. **Cloud VIP Assets**:
    Remote cloud-hosted VIP assets and server-validated processing remain locked.
+4. **Server-Side Capacity and Region Rejections**:
+   The API v2-boot redirection routes requests to official alternate endpoints to bypass region-level choking ("Too many people are using this feature now"), but server-refused content or endpoints that require server-side cryptographic attestation / unbanned IP ranges may still refuse requests.
 
 ---
 

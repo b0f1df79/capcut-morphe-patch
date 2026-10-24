@@ -1,3 +1,16 @@
+## [1.27.0](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.26.2...v1.27.0) (2026-10-24)
+
+### Bug Fixes
+
+* **moovit:** diagnose signingInfo spoof status in maps verdict ([0df1a05](https://github.com/kveld9/kveld-extra-morphe-patches/commit/0df1a05f41779d6f7f2d575c31d7367965c9695e))
+* **moovit:** report maps signature spoof status instead of failing silently ([30f2d16](https://github.com/kveld9/kveld-extra-morphe-patches/commit/30f2d169917eee5ef54d353c0b1a5c459a9bfbf4))
+* **moovit:** require personal Google Maps API key with setup guide ([4564b96](https://github.com/kveld9/kveld-extra-morphe-patches/commit/4564b966065ec1141b07a02234d9fcc3a64fb1b2))
+
+### New Features
+
+* **capcut:** use alternate endpoints for effects and feeds where blocked ([29b82e8](https://github.com/kveld9/kveld-extra-morphe-patches/commit/29b82e8d8be0d1d559e63cc75a0abb1182c93232))
+* **moovit:** add opt-in toggle to force Google Maps engine ([d313a33](https://github.com/kveld9/kveld-extra-morphe-patches/commit/d313a33c1f10b5f7a52c137da3982ac12745a4c6))
+
 ## [1.26.2](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.26.1...v1.26.2) (2026-10-24)
 
 ### Bug Fixes

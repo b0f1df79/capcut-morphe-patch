@@ -153,7 +153,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 </details>
 
 <details>
-<summary>CapCut&nbsp;&nbsp;•&nbsp;&nbsp;<b>11 patches</b></summary>
+<summary>CapCut&nbsp;&nbsp;•&nbsp;&nbsp;<b>12 patches</b></summary>
 <br>
 
 **Supported versions:**
@@ -171,6 +171,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | **Bypass Unsafe Package Modal** | Replaces the unsafe-package modal fallback URL in the Lynx schema defaults with the real template portal URL so region-blocked or untrusted-client fallbacks open templates instead of the blocking security notice. |  |
 | **Locale Assets Slimmer** | Strips unselected CapCut asset locale bundles (assets/locales/*.json) from the APK. English is always preserved. For res/values-* string tables use the canonical universal Remove Extra Languages patch. | • Locales to keep |
 | **Native Bloat Slimmer** | Strips non-essential companion native libraries by zeroing bytes in-situ. Always zeroes AppLovin ad crash reporter. WARNING: Stripping speech recognition and synthesis engines (libspeech*.so) disables voice recognition, voiceover captions, and speech-to-text features. | • Trim Speech Engines (Breaks Voice Features) |
+| **Redirect API to v2 Boot** | Loads effects, feeds and templates where default endpoints are blocked by using official alternate endpoints. |  |
 | **Remove Watermark** | Forces CapCut watermark-removal gates and default ending gate to allow export without watermark or outro. |  |
 | **Unlock Premium** | Forces CapCut VIP gates to return true (SubscribeImpl, PayVipImpl, UserVipInfo, UserDetailInfo, VipUserServiceImpl, SubscribeCloudImpl) plus central account status flags (BusinessManager). Cloud-gated assets may still fail. |  |
 | **Unlock Premium Templates** | Marks premium template styles as available so locked template features stay usable. |  |
@@ -191,7 +192,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | Patch | Description | Options |
 |----------|----------------|-----------|
 | **Block Telemetry & Trackers** | Neutralizes AppsFlyer, Braze, and Inneractive DEX dispatchers, disables analytics services/providers, and strips advertising permissions. |  |
-| **Fix Google Maps** | Restores Google Maps rendering by spoofing the original package signature to Google Play Services. | • Google Maps Platform API key |
+| **Fix Google Maps** | Restores Google Maps rendering by spoofing the original package signature to Google Play Services. | • Google Maps Platform API key<br>• Force Google Maps engine |
 | **Remove Ads** | Hides banner and inline ads and neutralizes ad unit ID lookups. |  |
 | **Suppress Paywalls** | Suppresses subscription paywalls, onboarding upgrade dialogs, and promotional cards. |  |
 | **Unlock Moovit+** | Unlocks Moovit+ premium subscription features locally, including Safe Ride and address search in favorites. |  |

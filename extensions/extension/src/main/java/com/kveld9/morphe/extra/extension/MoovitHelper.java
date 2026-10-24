@@ -309,6 +309,8 @@ public class MoovitHelper {
         }
     }
 
+    // Safe: runtime guarded by SDK_INT >= P check in spoofSignature and Throwable catch.
+    @android.annotation.SuppressLint("NewApi")
     private static void spoofSigningInfo(PackageInfo info, Signature sig) {
         try {
             Class<?> sdClass;
@@ -370,6 +372,8 @@ public class MoovitHelper {
         return null;
     }
 
+    // Safe: runtime guarded by SDK_INT >= P check in caller chain and reflection with Throwable catch.
+    @android.annotation.SuppressLint("NewApi")
     private static SigningInfo createSigningInfo(Class<?> sdClass, Object signingDetails) {
         try {
             Constructor<SigningInfo> c = SigningInfo.class.getDeclaredConstructor(sdClass);
@@ -381,6 +385,8 @@ public class MoovitHelper {
         }
     }
 
+    // Safe: runtime guarded by SDK_INT >= P check in caller chain and reflection with Throwable catch.
+    @android.annotation.SuppressLint({"NewApi", "SoonBlockedPrivateApi"})
     private static SigningInfo createSigningInfoFallback(Object signingDetails) {
         try {
             SigningInfo si = new SigningInfo();

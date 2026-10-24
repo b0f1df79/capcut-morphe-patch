@@ -16,8 +16,8 @@ private val mapsApiKeyOption = stringOption(
     key = "mapsApiKey",
     default = null,
     title = "Google Maps Platform API key",
-    description = "Optional custom Google Maps Platform key. When omitted, built-in keys work automatically via signature spoofing.",
-    required = false,
+    description = "Personal Google Maps Platform API key. Required because the built-in key only works with the original signature.",
+    required = true,
 )
 
 private val forceGoogleMapsOption = booleanOption(
@@ -38,8 +38,7 @@ private val moovitMapsApiKeyResourcePatch = resourcePatch(
     execute {
         val key = mapsApiKeyOption.value
         if (key.isNullOrBlank()) {
-            println("[Fix Google Maps] Using signature spoofing for built-in Google Maps key.")
-            return@execute
+            error("[Fix Google Maps] A personal Google Maps API key is required. See docs/apps/moovit.md, section Fix Google Maps.")
         }
 
         val manifestFile = get("AndroidManifest.xml")

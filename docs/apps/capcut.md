@@ -22,16 +22,16 @@ Technical documentation and patch catalog for CapCut on Android.
 
 | Patch Name | Typology | Default State | Dependencies | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **Block Telemetry & Trackers** | `bytecodePatch` | `true` (Enabled) | `CapCut Telemetry Manifest Purge` | Neutralizes Google AppMeasurement, AppsFlyer, and ByteDance AppLog event dispatchers. |
+| **Block Telemetry & Trackers** | `bytecodePatch` | `true` (Enabled) | `CapCut Telemetry Manifest Purge` | Neutralizes Google AppMeasurement, AppsFlyer, ByteDance AppLog, APM/Slardar, Gecko, Pitaya, BDTuring, and UserGrowth event dispatchers. |
 | **CapCut Telemetry Manifest Purge** | `resourcePatch` | `false` (Opt-in) | None | Strips 6 advertising/tracking permissions, disables measurement/analytics/attribution components (AppMeasurement, AppLovin, Vungle, BDInstall, ByteDance AppLog Collector, LogService, Pangle), prunes analytics discovery registrars (MLKit/messaging/crashlytics preserved), injects 8 opt-out metadata flags. |
 | **Locale Assets Slimmer** | `resourcePatch` | `false` (Opt-in) | None | Strips unselected assets/locales/*.json bundles via locales option (default en). English always preserved. res/values-* tables are covered by the canonical universal Remove Extra Languages patch. |
 | **Bypass Effects Region Restriction** | `bytecodePatch` | `true` (Enabled) | None | Spoofs device_platform to "windows" and resets deviceId in EffectConfiguration to bypass ByteDance Shark WAF effect loading blocks. |
 | **Bypass GeoBlock Region Restriction** | `bytecodePatch` | `true` (Enabled) | None | Forces CapCut GeoBlock config lists (cert, dock, entrance, page, scheme) to empty so region-blocked surfaces stay enabled. Server-refused content may still fail to load. |
-| **Bypass Signature Check** | `bytecodePatch` | `true` (Enabled) | None | Spoofs official APK SHA-256 signature, suppresses signature blacklist and abnormal-source toasts, disables Godzilla inject detection, stubs the cracking verdict persistence plus the security dialog render, and neutralizes the template-feed cracking interceptor so re-signed builds are not blocked. |
+| **Bypass Signature Check** | `bytecodePatch` | `true` (Enabled) | None | Spoofs official APK SHA-256 signature, suppresses signature blacklist and abnormal-source toasts, disables Godzilla inject detection, stubs the cracking verdict persistence plus the security dialog render, and neutralizes the template-feed cracking interceptor so re-signed builds are not blocked, plus stubs Pangle PGL signature verification gates. |
 | **Bypass Unsafe Package Modal** | `bytecodePatch` | `true` (Enabled) | None | Rewrites Lynx schema default fallback URL from unsafe-package modal to template portal to bypass security notice dialogs. |
 | **Unlock Premium** | `bytecodePatch` | `true` (Enabled) | None | Forces VIP and subscription gates to return true (SubscribeImpl, PayVipImpl, UserVipInfo, UserDetailInfo, VipUserServiceImpl, SubscribeCloudImpl), plus central account-status flags. |
 | **Native Bloat Slimmer** | `rawResourcePatch` | `false` (Opt-in) | None | Zeroes AppLovin crash-reporter .so in-situ across arm64-v8a/armeabi-v7a; optional trimSpeechEngines toggle zeroes speech .so libs (breaks voice features). |
-| **Remove Watermark** | `bytecodePatch` | `true` (Enabled) | None | Allows exporting videos without watermark by bypassing watermark-removal entitlement gates. |
+| **Remove Watermark** | `bytecodePatch` | `true` (Enabled) | None | Forces watermark-removal gates and the default ending gate to allow export without watermark or outro. |
 | **Unlock Ultra HD Export** | `bytecodePatch` | `true` (Enabled) | None | Enables Ultra HD and 4K video export options by unlocking high-resolution export eligibility gates. |
 | **Unlock Premium Templates** | `bytecodePatch` | `true` (Enabled) | None | Marks premium template styles as available so locked template features stay usable. |
 
@@ -49,7 +49,7 @@ Technical documentation and patch catalog for CapCut on Android.
 
 1. **Block Telemetry & Trackers**:
    - **Objective**: Stop runtime telemetry event dispatching across first-party and third-party tracking pipelines.
-   - **How**: Intercepts event logging entrypoints (Google AppMeasurement, CapCut AppsFlyerAnalytics and AppsFlyer delegate entrypoints, ByteDance AppLogInstance event dispatchers) and injects immediate void returns.
+   - **How**: Intercepts event logging entrypoints (Google AppMeasurement, CapCut AppsFlyerAnalytics and AppsFlyer delegate entrypoints, ByteDance AppLogInstance event dispatchers, APM/Slardar, Gecko, Pitaya, BDTuring, and UserGrowth dispatchers) and injects immediate void returns, and neutralizes the TempStatics network interceptor as a passthrough.
 
 2. **Bypass Effects Region Restriction**:
    - **Objective**: Restore loading of effects, transitions, and templates blocked by region firewalls.
@@ -61,7 +61,7 @@ Technical documentation and patch catalog for CapCut on Android.
 
 4. **Bypass Signature Check**:
    - **Objective**: Allow re-signed application packages to run without integrity errors or tamper alerts.
-   - **How**: Returns the official APK signature hash during telemetry checks, clears the signature blacklist, silences tamper toasts, disables injection detection gates, stubs the cracking verdict persistence plus the security dialog render, and neutralizes a second cracking interceptor on the template feed (it would otherwise relaunch the notice on specific server verdicts) so the blocking notice can never display.
+   - **How**: Returns the official APK signature hash during telemetry checks, clears the signature blacklist, silences tamper toasts, disables injection detection gates, stubs the cracking verdict persistence plus the security dialog render, and neutralizes a second cracking interceptor on the template feed (it would otherwise relaunch the notice on specific server verdicts) so the blocking notice can never display, and stubs Pangle PGL signature verification gates.
 
 5. **Bypass Unsafe Package Modal**:
    - **Objective**: Prevent blocking security warning dialogs on startup.
@@ -73,7 +73,7 @@ Technical documentation and patch catalog for CapCut on Android.
 
 7. **Remove Watermark**:
    - **Objective**: Allow exporting videos without watermark by unlocking watermark removal options.
-   - **How**: Overrides watermark eligibility checks and scene removal gates to allow export without watermarks, and disables the default-on brand watermark flag.
+   - **How**: Overrides watermark eligibility checks and scene removal gates to allow export without watermarks, disables the default-on brand watermark flag, and forces the default ending gate off so exports ship without the outro.
 
 8. **Unlock Ultra HD Export**:
    - **Objective**: Keep Ultra HD and 4K video export options available during export.

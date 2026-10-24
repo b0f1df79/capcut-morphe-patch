@@ -54,7 +54,7 @@ Note: `versionCode 1809` corresponds to the actual build versionCode assigned on
 
 2. **Fix Google Maps**:
    - **Objective**: Prevent map tile rendering failures on re-signed builds.
-   - **How**: Spoofs original package signatures communicated to Google Play Services. The patch spoofs the original package signature and emits a "[Fix Google Maps] Signature spoof active/inactive" verdict line to the user log. Also probes Google Play Services availability, logging `[Fix Google Maps] Play Services availability: <code>.` to diagnose Google engine support. Provides an opt-in toggle (`forceGoogleMaps`, default `false`) to force the Google Maps engine in the map factory selector instead of the region default. Use this option to validate Google Maps rendering on test devices or in transit regions normally served by OSM/Nutiteq.
+   - **How**: Spoofs original package signatures communicated to Google Play Services. The patch spoofs the original package signature and emits a "[Fix Google Maps] Signature spoof active/inactive" verdict line to the user log. Also logs `[Fix Google Maps] SigningInfo spoof active (sha1=...).` or `[Fix Google Maps] Setup note: signingInfo NOT spoofed (<reason>).` to diagnose SigningInfo spoofing. Also probes Google Play Services availability, logging `[Fix Google Maps] Play Services availability: <code>.` to diagnose Google engine support. Provides an opt-in toggle (`forceGoogleMaps`, default `false`) to force the Google Maps engine in the map factory selector instead of the region default. Use this option to validate Google Maps rendering on test devices or in transit regions normally served by OSM/Nutiteq.
 
 3. **Remove Ads**:
    - **Objective**: Remove banner and inline advertisements.
@@ -78,7 +78,7 @@ None related to resource trimming.
 
 ## 5. Known Limitations
 
-If map tiles stay blank on very new Android versions, capture the "[Fix Google Maps]" verdict line from the log when reporting.
+If map tiles stay blank on very new Android versions, capture the "[Fix Google Maps]" verdict lines from the log when reporting.
 
 ---
 

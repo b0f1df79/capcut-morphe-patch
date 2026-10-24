@@ -159,7 +159,8 @@ public class MoovitHelper {
             if (pm == null) {
                 System.out.println("[Fix Google Maps] Spoof inactive: package manager unavailable.");
             } else {
-                checkVerdict(installedSha1(queryOwnPackageInfo(pm)));
+                PackageInfo info = queryOwnPackageInfo(pm);
+                checkVerdict(info, installedSha1(info));
             }
         } catch (Throwable t) {
             String msg = t.getMessage();
@@ -188,12 +189,16 @@ public class MoovitHelper {
 
     private static PackageInfo queryOwnPackageInfo(Object pm) throws Throwable {
         int userId = myUserId();
+        long flags = (long) PackageManager.GET_SIGNATURES;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            flags |= PackageManager.GET_SIGNING_CERTIFICATES;
+        }
         try {
             Method m = pm.getClass().getMethod("getPackageInfo", String.class, long.class, int.class);
-            return (PackageInfo) m.invoke(pm, PKG, (long) PackageManager.GET_SIGNATURES, userId);
+            return (PackageInfo) m.invoke(pm, PKG, flags, userId);
         } catch (NoSuchMethodException e) {
             Method m = pm.getClass().getMethod("getPackageInfo", String.class, int.class, int.class);
-            return (PackageInfo) m.invoke(pm, PKG, PackageManager.GET_SIGNATURES, userId);
+            return (PackageInfo) m.invoke(pm, PKG, (int) flags, userId);
         }
     }
 
@@ -226,15 +231,56 @@ public class MoovitHelper {
         return null;
     }
 
-    private static void checkVerdict(String actualSha1) {
+    private static void checkVerdict(PackageInfo info, String actualSha1) {
         if (actualSha1 == null) {
             System.out.println("[Fix Google Maps] Spoof inactive: no signature found.");
             return;
         }
         if (EXPECTED_SHA1.equalsIgnoreCase(actualSha1)) {
             System.out.println("[Fix Google Maps] Signature spoof active (sha1=" + EXPECTED_SHA1 + ").");
+            checkSigningInfoVerdict(info);
         } else {
             System.out.println("[Fix Google Maps] Spoof inactive: signature mismatch (sha1=" + actualSha1 + ").");
+        }
+    }
+
+    private static void checkSigningInfoVerdict(PackageInfo info) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.P) {
+            System.out.println("[Fix Google Maps] Setup note: signingInfo NOT spoofed (API < 28).");
+            return;
+        }
+        if (info == null || info.signingInfo == null) {
+            System.out.println("[Fix Google Maps] Setup note: signingInfo NOT spoofed (signingInfo is null).");
+            return;
+        }
+        try {
+            Signature sig = null;
+            try {
+                Signature[] history = info.signingInfo.getSigningCertificateHistory();
+                if (history != null && history.length > 0 && history[0] != null) {
+                    sig = history[0];
+                }
+            } catch (Throwable ignored) { }
+            if (sig == null) {
+                try {
+                    Signature[] signers = info.signingInfo.getApkContentsSigners();
+                    if (signers != null && signers.length > 0 && signers[0] != null) {
+                        sig = signers[0];
+                    }
+                } catch (Throwable ignored) { }
+            }
+            if (sig == null) {
+                System.out.println("[Fix Google Maps] Setup note: signingInfo NOT spoofed (no certificate found).");
+                return;
+            }
+            String actualSha1 = sha1Hex(sig.toByteArray());
+            if (EXPECTED_SHA1.equalsIgnoreCase(actualSha1)) {
+                System.out.println("[Fix Google Maps] SigningInfo spoof active (sha1=" + EXPECTED_SHA1 + ").");
+            } else {
+                System.out.println("[Fix Google Maps] Setup note: signingInfo NOT spoofed (signature mismatch: sha1=" + actualSha1 + ").");
+            }
+        } catch (Throwable t) {
+            System.out.println("[Fix Google Maps] Setup note: signingInfo NOT spoofed (" + t.getClass().getSimpleName() + ").");
         }
     }
 
@@ -265,15 +311,27 @@ public class MoovitHelper {
 
     private static void spoofSigningInfo(PackageInfo info, Signature sig) {
         try {
-            Class<?> sdClass = Class.forName("android.content.pm.SigningDetails");
+            Class<?> sdClass;
+            try {
+                sdClass = Class.forName("android.content.pm.SigningDetails");
+            } catch (Throwable t) {
+                System.out.println("[Fix Google Maps] Setup note: SigningDetails class lookup failed: " + t.getClass().getSimpleName());
+                return;
+            }
             Object signingDetails = createSigningDetails(sdClass, sig);
             if (signingDetails != null) {
                 SigningInfo si = createSigningInfo(sdClass, signingDetails);
                 if (si != null) {
-                    info.signingInfo = si;
+                    try {
+                        info.signingInfo = si;
+                    } catch (Throwable t) {
+                        System.out.println("[Fix Google Maps] Setup note: PackageInfo.signingInfo field assignment failed: " + t.getClass().getSimpleName());
+                    }
                 }
             }
-        } catch (Throwable ignored) { }
+        } catch (Throwable t) {
+            System.out.println("[Fix Google Maps] Setup note: spoofSigningInfo failed: " + t.getClass().getSimpleName());
+        }
     }
 
     private static Object createSigningDetails(Class<?> sdClass, Signature sig) {
@@ -286,19 +344,28 @@ public class MoovitHelper {
                 .invoke(builder, 1);
             return builderClass.getDeclaredMethod("build").invoke(builder);
         } catch (Throwable t) {
+            System.out.println("[Fix Google Maps] Setup note: SigningDetails$Builder failed: " + t.getClass().getSimpleName());
             return createSigningDetailsViaConstructor(sdClass, sig);
         }
     }
 
     private static Object createSigningDetailsViaConstructor(Class<?> sdClass, Signature sig) {
-        for (Constructor<?> c : sdClass.getDeclaredConstructors()) {
-            c.setAccessible(true);
-            Class<?>[] p = c.getParameterTypes();
-            try {
+        try {
+            for (Constructor<?> c : sdClass.getDeclaredConstructors()) {
+                c.setAccessible(true);
+                Class<?>[] p = c.getParameterTypes();
                 if (p.length == 2 && p[0] == Signature[].class && p[1] == int.class) {
-                    return c.newInstance(new Signature[]{sig}, 1);
+                    try {
+                        return c.newInstance(new Signature[]{sig}, 1);
+                    } catch (Throwable t) {
+                        System.out.println("[Fix Google Maps] Setup note: SigningDetails constructor failed: " + t.getClass().getSimpleName());
+                        return null;
+                    }
                 }
-            } catch (Throwable ignored) { }
+            }
+            System.out.println("[Fix Google Maps] Setup note: SigningDetails constructor failed: NoSuchMethodException");
+        } catch (Throwable t) {
+            System.out.println("[Fix Google Maps] Setup note: SigningDetails constructor failed: " + t.getClass().getSimpleName());
         }
         return null;
     }
@@ -309,6 +376,7 @@ public class MoovitHelper {
             c.setAccessible(true);
             return c.newInstance(signingDetails);
         } catch (Throwable t) {
+            System.out.println("[Fix Google Maps] Setup note: SigningInfo constructor failed: " + t.getClass().getSimpleName());
             return createSigningInfoFallback(signingDetails);
         }
     }
@@ -320,7 +388,8 @@ public class MoovitHelper {
             f.setAccessible(true);
             f.set(si, signingDetails);
             return si;
-        } catch (Throwable ignored) {
+        } catch (Throwable t) {
+            System.out.println("[Fix Google Maps] Setup note: SigningInfo field assignment failed: " + t.getClass().getSimpleName());
             return null;
         }
     }

@@ -41,12 +41,14 @@ private val moovitMapsApiKeyResourcePatch = resourcePatch(
             error("[Fix Google Maps] A personal Google Maps API key is required. See docs/apps/moovit.md, section Fix Google Maps.")
         }
 
+        val cleanKey = key.trim()
+
         val manifestFile = get("AndroidManifest.xml")
         if (manifestFile.exists()) {
             document(manifestFile.absolutePath).use { doc ->
                 val application = doc.getElementsByTagName("application").item(0) as? Element
                 if (application != null) {
-                    application.setApplicationMetaData("com.google.android.geo.API_KEY", key)
+                    application.setApplicationMetaData("com.google.android.geo.API_KEY", cleanKey)
                 }
             }
         }
@@ -60,7 +62,7 @@ private val moovitMapsApiKeyResourcePatch = resourcePatch(
                     .mapNotNull { strings.item(it) as? Element }
                     .singleOrNull { it.getAttribute("name") == "google_wla_api_key" }
                 if (webServicesKey != null) {
-                    webServicesKey.textContent = key
+                    webServicesKey.textContent = cleanKey
                 }
             }
         }

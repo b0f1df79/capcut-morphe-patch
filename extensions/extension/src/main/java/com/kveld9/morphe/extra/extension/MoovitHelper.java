@@ -158,12 +158,31 @@ public class MoovitHelper {
             Object pm = f.get(null);
             if (pm == null) {
                 System.out.println("[Fix Google Maps] Spoof inactive: package manager unavailable.");
-                return;
+            } else {
+                checkVerdict(installedSha1(queryOwnPackageInfo(pm)));
             }
-            checkVerdict(installedSha1(queryOwnPackageInfo(pm)));
         } catch (Throwable t) {
             String msg = t.getMessage();
             System.out.println("[Fix Google Maps] Spoof inactive: " + (msg != null ? msg : t.getClass().getSimpleName()) + ".");
+        }
+        probePlayServices(app);
+    }
+
+    private static void probePlayServices(Application app) {
+        if (app == null) return;
+        try {
+            Class<?> gmsClass = Class.forName("com.google.android.gms.common.GoogleApiAvailability");
+            Object instance = gmsClass.getField("f").get(null);
+            Class<?> aClass = Class.forName("com.google.android.gms.common.a");
+            int minVersion = aClass.getField("a").getInt(null);
+            Method checkMethod = aClass.getMethod("c", android.content.Context.class, int.class);
+            int code = (Integer) checkMethod.invoke(instance, app, minVersion);
+            System.out.println("[Fix Google Maps] Play Services availability: " + code + ".");
+            if (code == 1 || code == 3 || code == 9) {
+                System.out.println("[Fix Google Maps] Setup note: Play Services unavailable (" + code + "); Google engine will fall back to Nutiteq.");
+            }
+        } catch (Throwable t) {
+            System.out.println("[Fix Google Maps] Play Services availability: " + t.getClass().getSimpleName() + ".");
         }
     }
 

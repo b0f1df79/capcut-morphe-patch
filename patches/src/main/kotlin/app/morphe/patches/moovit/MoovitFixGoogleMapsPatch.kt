@@ -2,12 +2,14 @@ package app.morphe.patches.moovit
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.patch.booleanOption
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.patch.stringOption
 import app.morphe.patches.shared.Constants.COMPATIBILITY_MOOVIT
 import app.morphe.patches.shared.setApplicationMetaData
 import app.morphe.patches.shared.sharedExtensionPatch
+import com.android.tools.smali.dexlib2.AccessFlags
 import org.w3c.dom.Element
 
 private val mapsApiKeyOption = stringOption(
@@ -15,6 +17,14 @@ private val mapsApiKeyOption = stringOption(
     default = null,
     title = "Google Maps Platform API key",
     description = "Optional custom Google Maps Platform key. When omitted, built-in keys work automatically via signature spoofing.",
+    required = false,
+)
+
+private val forceGoogleMapsOption = booleanOption(
+    key = "forceGoogleMaps",
+    default = false,
+    title = "Force Google Maps engine",
+    description = "Always use Google Maps instead of the region default map.",
     required = false,
 )
 
@@ -66,6 +76,11 @@ private val moovitApplicationOnCreateFingerprint = Fingerprint(
     returnType = "V",
 )
 
+private val acquireMapViewFactoryFingerprint = Fingerprint(
+    parameters = listOf("Lcom/moovit/map/MapImplType;"),
+    strings = listOf("acquireMapViewFactory mapImplType: "),
+)
+
 @Suppress("unused")
 val moovitFixGoogleMapsPatch = bytecodePatch(
     name = "Fix Google Maps",
@@ -76,6 +91,7 @@ val moovitFixGoogleMapsPatch = bytecodePatch(
     dependsOn(moovitMapsApiKeyResourcePatch, sharedExtensionPatch)
 
     mapsApiKeyOption()
+    forceGoogleMapsOption()
 
     execute {
         moovitApplicationOnCreateFingerprint.method.addInstructions(
@@ -83,5 +99,15 @@ val moovitFixGoogleMapsPatch = bytecodePatch(
             "invoke-static {p0}, Lcom/kveld9/morphe/extra/extension/MoovitHelper;->init(Landroid/app/Application;)V",
         )
         println("[Fix Google Maps] Injected signature spoofing initializer into MoovitApplication.onCreate -> Maps rendering restored.")
+
+        if (forceGoogleMapsOption.value == true) {
+            val targetMethod = acquireMapViewFactoryFingerprint.method
+            val paramReg = if (AccessFlags.STATIC.isSet(targetMethod.accessFlags)) "p0" else "p1"
+            targetMethod.addInstructions(
+                0,
+                "sget-object $paramReg, Lcom/moovit/map/MapImplType;->GOOGLE:Lcom/moovit/map/MapImplType;",
+            )
+            println("[Fix Google Maps] Forced Google Maps engine in map factory selector.")
+        }
     }
 }

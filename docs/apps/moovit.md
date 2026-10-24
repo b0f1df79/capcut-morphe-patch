@@ -26,7 +26,7 @@ Note: `versionCode 1809` corresponds to the actual build versionCode assigned on
 | :--- | :--- | :--- | :--- | :--- |
 | **Block Telemetry & Trackers** | `bytecodePatch` | `true` (Enabled) | `Moovit Telemetry Manifest Purge` | Neutralizes AppsFlyer, Braze, and Inneractive DEX dispatchers, disables analytics services/providers, and strips advertising permissions. |
 | **Moovit Telemetry Manifest Purge** | `resourcePatch` | `false` (Opt-in) | None | Strips advertising and tracking permissions, disables analytics services, providers, and receivers, and injects opt-out metadata in AndroidManifest.xml. |
-| **Fix Google Maps** | `bytecodePatch` | `true` (Enabled) | `Moovit Custom Maps API Key` | Restores Google Maps rendering by spoofing the original package signature to Google Play Services. |
+| **Fix Google Maps** | `bytecodePatch` | `true` (Enabled) | `Moovit Custom Maps API Key` | Restores Google Maps rendering by spoofing the original package signature to Google Play Services. Includes opt-in toggle to force the Google Maps engine. |
 | **Moovit Custom Maps API Key** | `resourcePatch` | `false` (Opt-in) | None | Replaces the Google Maps API key in AndroidManifest.xml and web-service strings when a custom key is provided. |
 | **Remove Ads** | `bytecodePatch` | `true` (Enabled) | None | Hides banner and inline ads and neutralizes ad unit ID lookups. |
 | **Suppress Paywalls** | `bytecodePatch` | `true` (Enabled) | None | Suppresses subscription paywalls, onboarding upgrade dialogs, and promotional cards. |
@@ -54,7 +54,7 @@ Note: `versionCode 1809` corresponds to the actual build versionCode assigned on
 
 2. **Fix Google Maps**:
    - **Objective**: Prevent map tile rendering failures on re-signed builds.
-   - **How**: Spoofs original package signatures communicated to Google Play Services. The patch spoofs the original package signature and emits a "[Fix Google Maps] Signature spoof active/inactive" verdict line to the user log.
+   - **How**: Spoofs original package signatures communicated to Google Play Services. The patch spoofs the original package signature and emits a "[Fix Google Maps] Signature spoof active/inactive" verdict line to the user log. Also probes Google Play Services availability, logging `[Fix Google Maps] Play Services availability: <code>.` to diagnose Google engine support. Provides an opt-in toggle (`forceGoogleMaps`, default `false`) to force the Google Maps engine in the map factory selector instead of the region default. Use this option to validate Google Maps rendering on test devices or in transit regions normally served by OSM/Nutiteq.
 
 3. **Remove Ads**:
    - **Objective**: Remove banner and inline advertisements.

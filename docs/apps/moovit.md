@@ -54,7 +54,7 @@ Note: `versionCode 1809` corresponds to the actual build versionCode assigned on
 
 2. **Fix Google Maps**:
    - **Objective**: Prevent map tile rendering failures on re-signed builds.
-   - **How**: Spoofs original package signatures communicated to Google Play Services.
+   - **How**: Spoofs original package signatures communicated to Google Play Services. The patch spoofs the original package signature and emits a "[Fix Google Maps] Signature spoof active/inactive" verdict line to the user log.
 
 3. **Remove Ads**:
    - **Objective**: Remove banner and inline advertisements.
@@ -78,7 +78,7 @@ None related to resource trimming.
 
 ## 5. Known Limitations
 
-None evidenced by patch sources.
+If map tiles stay blank on very new Android versions, capture the "[Fix Google Maps]" verdict line from the log when reporting.
 
 ---
 

@@ -80,7 +80,7 @@ val moovitFixGoogleMapsPatch = bytecodePatch(
     execute {
         moovitApplicationOnCreateFingerprint.method.addInstructions(
             0,
-            "invoke-static {}, Lcom/kveld9/morphe/extra/extension/MoovitHelper;->init()V",
+            "invoke-static {p0}, Lcom/kveld9/morphe/extra/extension/MoovitHelper;->init(Landroid/app/Application;)V",
         )
         println("[Fix Google Maps] Injected signature spoofing initializer into MoovitApplication.onCreate -> Maps rendering restored.")
     }

@@ -48,11 +48,11 @@ private data class InstructionReplacement(
 // rather than rewritable const-string instructions in method bodies.
 // Per Rule R2 (Zero-Fingerprint-Mismatch / zero dead hooks), both are pruned so that
 // fingerprints only target active, verified bytecode const-string endpoints.
-// All functional traffic is carried by the 4 active capcutapi.com hosts (50 verified rewrites):
-// - editor-api.capcutapi.com (16)
-// - feed-api.capcutapi.com (25)
-// - commerce-api.capcutapi.com (5)
-// - passport-api.capcutapi.com (4)
+// All functional traffic is carried by the 4 active capcutapi.com hosts (63 verified rewrites):
+// - editor-api.capcutapi.com (19)
+// - feed-api.capcutapi.com (34)
+// - commerce-api.capcutapi.com (7)
+// - passport-api.capcutapi.com (3)
 private val FUNCTIONAL_HOST_REDIRECTS = listOf(
     HostRedirect(
         oldHost = "editor-api.capcutapi.com",

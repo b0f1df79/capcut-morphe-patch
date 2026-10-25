@@ -1,12 +1,69 @@
 package app.morphe.patches.word
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.StringComparisonType
 import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.methodCall
+import app.morphe.patcher.string
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction22c
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
+
+// -- Integrity ----------------------------------------------------------------
+
+internal val codeTransparencyCheckFingerprint = Fingerprint(
+    returnType = "V",
+    parameters = listOf(
+        "Landroid/content/Context;",
+        "Lcom/microsoft/office/android/transparencyverification/CodeTransparencyVerificationCallback;",
+        "Z",
+    ),
+)
+
+// -- Login --------------------------------------------------------------------
+
+internal val firstRunM0Fingerprint = Fingerprint(
+    returnType = "V",
+    parameters = listOf("Z", "Lcom/microsoft/office/officehub/objectmodel/IOnTaskCompleteListener;"),
+    filters = listOf(
+        methodCall(
+            definingClass = "Lcom/microsoft/office/officehub/util/OHubSharedPreferences;",
+            name = "isFTUXShown",
+        ),
+    ),
+)
+
+internal val firstRunN0Fingerprint = Fingerprint(
+    returnType = "V",
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    parameters = emptyList(),
+    strings = listOf(string("FRE Completed", StringComparisonType.EQUALS)),
+)
+
+internal val ftuxPaywallLauncherFingerprint = Fingerprint(
+    returnType = "V",
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    parameters = listOf(
+        "Landroid/content/Context;",
+        "Lcom/microsoft/office/docsui/common/DrillInDialog;",
+        "Lcom/microsoft/office/officehub/objectmodel/IOnTaskCompleteListener;",
+    ),
+)
+
+internal val checkAndStartSSOIfRequiredFingerprint = Fingerprint(
+    definingClass = "Lcom/microsoft/office/docsui/common/FileActivationSSOManager;",
+    name = "checkAndStartSSOIfRequired",
+    returnType = "Z",
+    parameters = listOf("Z"),
+)
+
+internal val getIdentityForSignInNameFingerprint = Fingerprint(
+    definingClass = "Lcom/microsoft/office/identity/IdentityLiblet;",
+    name = "GetIdentityForSignInName",
+    returnType = "Lcom/microsoft/office/identity/Identity;",
+    parameters = listOf("Ljava/lang/String;", "Z", "Z"),
+)
 
 // -- Premium ------------------------------------------------------------------
 

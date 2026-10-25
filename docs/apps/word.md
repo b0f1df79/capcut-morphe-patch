@@ -14,7 +14,7 @@ Technical documentation and patch catalog for Microsoft Word on Android.
 | **Target Package Format** | APKM |
 | **Primary Architecture** | `arm64-v8a` |
 | **Authoritative Source** | APKMirror |
-| **Download Target** | [Word 16.0.20527.20034 (arm64-v8a, 120-480dpi, versionCode 2005437911, APKM)](https://www.apkmirror.com/apk/microsoft-corporation/microsoft-word/microsoft-word-16-0-20527-20034-release/) |
+| **Download Target** | [Word 16.0.20527.20034 (arm64-v8a, 120-480dpi, versionCode 2005437911, APKM)](https://www.apkmirror.com/apk/microsoft-corporation/word/microsoft-word-edit-documents-16-0-20527-20034-release/) |
 
 ---
 
@@ -23,6 +23,7 @@ Technical documentation and patch catalog for Microsoft Word on Android.
 | Patch Name | Typology | Default State | Dependencies | Description |
 | :--- | :--- | :--- | :--- | :--- |
 | **Unlock 365 Family** | `bytecodePatch` | `true` (Enabled) | None | Unlocks Microsoft 365 Family subscription features locally. |
+| **Bypass Code Transparency** | `bytecodePatch` | `true` (Enabled) | None | Bypasses the code transparency checks. |
 
 ---
 
@@ -33,6 +34,9 @@ Technical documentation and patch catalog for Microsoft Word on Android.
 1. **Unlock 365 Family**:
    - **Objective**: Unlock premium subscription features and editing capabilities locally.
    - **How**: Forces subscription status checks to return true and bypasses enterprise license validation.
+2. **Bypass Code Transparency**:
+   - **Objective**: Let the resigned app pass launch-time integrity verification.
+   - **How**: Forces the verification entry flag so the check reports success without showing the untrusted-source wall.
 
 ---
 
@@ -48,7 +52,6 @@ The following modules are present in the PowerPoint target but have not been por
 
 - **Disable Login Requirement**: Removes login requirement and FTUX paywall screens.
 - **Block Telemetry & Trackers**: Neutralizes Microsoft OneDS/Aria lifecycle and ad measurement identifiers.
-- **Bypass Code Transparency**: Short-circuits verification checks to report immediate success.
 
 ---
 

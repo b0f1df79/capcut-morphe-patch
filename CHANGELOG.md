@@ -1,3 +1,14 @@
+## [1.27.1](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.27.0...v1.27.1) (2026-10-25)
+
+### Bug Fixes
+
+* **moovit:** scope lint suppressions on signing-info reflection ([7e6a399](https://github.com/kveld9/kveld-extra-morphe-patches/commit/7e6a399ee2aab2fd91dffc8ed72847a94fac7f53))
+* **moovit:** trim whitespace from mapsApiKey before injection ([0f10a0a](https://github.com/kveld9/kveld-extra-morphe-patches/commit/0f10a0a044507585a8ef573eca707ef407853e10))
+
+### Code Refactoring
+
+* **moovit:** derive package name from Application in extension helper ([090e557](https://github.com/kveld9/kveld-extra-morphe-patches/commit/090e557a9449408514d508e47a8a43fd51129204))
+
 ## [1.27.0](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.26.2...v1.27.0) (2026-10-24)
 
 ### Bug Fixes

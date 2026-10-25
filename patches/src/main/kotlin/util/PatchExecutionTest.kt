@@ -66,7 +66,6 @@ enum class TargetApp(
         appName = "Moovit",
         packageName = Constants.MOOVIT_PACKAGE_NAME,
         candidateFilenames = listOf(
-            "com.tranzmate_5.201.1.1809-1809_4arch_3dpi_24lang_86dff50a179cdf350e830925a5369e8b_apkmirror.com.apkm",
             "moovit_${Constants.MOOVIT_TARGET_VERSION}.apkm"
         ),
         filePattern = Regex("(?i).*(?:moovit|tranzmate).*\\.(?:apk|apkm|xapk)$"),

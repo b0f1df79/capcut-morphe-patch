@@ -24,6 +24,7 @@ Technical documentation and patch catalog for Microsoft Word on Android.
 | :--- | :--- | :--- | :--- | :--- |
 | **Unlock 365 Family** | `bytecodePatch` | `true` (Enabled) | None | Unlocks Microsoft 365 Family subscription features locally. |
 | **Bypass Code Transparency** | `bytecodePatch` | `true` (Enabled) | None | Bypasses the code transparency checks. |
+| **Remove Shared User ID** | `resourcePatch` | `true` (Enabled) | None | Removes the sharedUserId attribute from the manifest to prevent installation conflicts. |
 
 ---
 
@@ -37,6 +38,12 @@ Technical documentation and patch catalog for Microsoft Word on Android.
 2. **Bypass Code Transparency**:
    - **Objective**: Let the resigned app pass launch-time integrity verification.
    - **How**: Forces the verification entry flag so the check reports success without showing the untrusted-source wall.
+
+### B. Manifest Compatibility Layer (`resourcePatch`)
+
+1. **Remove Shared User ID**:
+   - **Objective**: Allow Word to install alongside other Microsoft Office apps.
+   - **How**: Strips the `sharedUserId` and `sharedUserLabel` attributes so the package no longer collides on shared permissions.
 
 ---
 

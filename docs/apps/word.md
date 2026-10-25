@@ -26,6 +26,7 @@ Technical documentation and patch catalog for Microsoft Word on Android.
 | **Bypass Code Transparency** | `bytecodePatch` | `true` (Enabled) | None | Bypasses the code transparency checks. |
 | **Remove Shared User ID** | `resourcePatch` | `true` (Enabled) | None | Removes the sharedUserId attribute from the manifest to prevent installation conflicts. |
 | **Disable Login Requirement** | `bytecodePatch` | `true` (Enabled) | None | Removes login requirement and FTUX paywall screens. |
+| **Block Telemetry & Trackers** | `bytecodePatch` + `resourcePatch` | `true` (Enabled) | None | Neutralizes OneDS/Aria dispatchers and ad identifiers; purges tracking manifest components. |
 
 ---
 
@@ -42,6 +43,9 @@ Technical documentation and patch catalog for Microsoft Word on Android.
 3. **Disable Login Requirement**:
    - **Objective**: Use Word without a Microsoft account and skip first-run paywalls.
    - **How**: Completes first-run tasks immediately, marks FTUX as shown, and neutralizes sign-in/SSO gates.
+4. **Block Telemetry & Trackers**:
+   - **Objective**: Silence analytics, crash-reporting, and ad-measurement SDKs.
+   - **How**: Stubs OneDS/Aria lifecycle and dispatch methods, blanks ad identifiers, and disables tracking manifest components with declarative opt-out flags.
 
 ### B. Manifest Compatibility Layer (`resourcePatch`)
 
@@ -59,9 +63,9 @@ None evidenced by patch sources.
 
 ## 5. Follow-up Modules (Out of Scope for This Release)
 
-The following modules are present in the PowerPoint target but have not been ported to Word yet:
-
-- **Block Telemetry & Trackers**: Neutralizes Microsoft OneDS/Aria lifecycle and ad measurement identifiers.
+No pending PowerPoint ports. UX declutter (paywall dialogs, onboarding polish)
+and privacy hardening (certificate pinning opt-in, share-link cleaning) remain
+possible future work.
 
 ---
 

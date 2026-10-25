@@ -10,6 +10,26 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.formats.Instruction22c
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 
+// -- Telemetry ----------------------------------------------------------------
+
+// AdMeasurementPlatformData confirmed in Word DEX:
+//   surface_sweep_word.tsv compat-bypass/installer-check:
+//   classes5.dex Lcom/microsoft/office/adsmobile_admeasurementpartner/admeasurement/AdMeasurementPlatformData;->getInstallSource()
+// getAIFA and getAppSetId share the same definingClass; exact name+signature anchors the index walk.
+internal val wordGetAIFAFingerprint = Fingerprint(
+    definingClass = "Lcom/microsoft/office/adsmobile_admeasurementpartner/admeasurement/AdMeasurementPlatformData;",
+    name = "getAIFA",
+    returnType = "Ljava/lang/String;",
+    parameters = emptyList(),
+)
+
+internal val wordGetAppSetIdFingerprint = Fingerprint(
+    definingClass = "Lcom/microsoft/office/adsmobile_admeasurementpartner/admeasurement/AdMeasurementPlatformData;",
+    name = "getAppSetId",
+    returnType = "Ljava/lang/String;",
+    parameters = emptyList(),
+)
+
 // -- Integrity ----------------------------------------------------------------
 
 internal val codeTransparencyCheckFingerprint = Fingerprint(

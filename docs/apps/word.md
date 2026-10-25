@@ -25,6 +25,7 @@ Technical documentation and patch catalog for Microsoft Word on Android.
 | **Unlock 365 Family** | `bytecodePatch` | `true` (Enabled) | None | Unlocks Microsoft 365 Family subscription features locally. |
 | **Bypass Code Transparency** | `bytecodePatch` | `true` (Enabled) | None | Bypasses the code transparency checks. |
 | **Remove Shared User ID** | `resourcePatch` | `true` (Enabled) | None | Removes the sharedUserId attribute from the manifest to prevent installation conflicts. |
+| **Disable Login Requirement** | `bytecodePatch` | `true` (Enabled) | None | Removes login requirement and FTUX paywall screens. |
 
 ---
 
@@ -38,6 +39,9 @@ Technical documentation and patch catalog for Microsoft Word on Android.
 2. **Bypass Code Transparency**:
    - **Objective**: Let the resigned app pass launch-time integrity verification.
    - **How**: Forces the verification entry flag so the check reports success without showing the untrusted-source wall.
+3. **Disable Login Requirement**:
+   - **Objective**: Use Word without a Microsoft account and skip first-run paywalls.
+   - **How**: Completes first-run tasks immediately, marks FTUX as shown, and neutralizes sign-in/SSO gates.
 
 ### B. Manifest Compatibility Layer (`resourcePatch`)
 
@@ -57,7 +61,6 @@ None evidenced by patch sources.
 
 The following modules are present in the PowerPoint target but have not been ported to Word yet:
 
-- **Disable Login Requirement**: Removes login requirement and FTUX paywall screens.
 - **Block Telemetry & Trackers**: Neutralizes Microsoft OneDS/Aria lifecycle and ad measurement identifiers.
 
 ---

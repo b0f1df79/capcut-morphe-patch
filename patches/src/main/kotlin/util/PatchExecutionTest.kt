@@ -181,6 +181,18 @@ enum class TargetApp(
         patchDirectoryPart = "sdmse",
         referenceSha256 = Constants.SDMSE_INPUT_SHA256,
     ),
+    WORD(
+        id = "word",
+        appName = "Word",
+        packageName = Constants.WORD_PACKAGE_NAME,
+        candidateFilenames = listOf(
+            "com.microsoft.office.word_16.0.20527.20034-2005437911_6dpi_24lang_59bd95dc67e5e1aca5e2f10d6a96bda8_apkmirror.com.apkm",
+            "word_${Constants.WORD_TARGET_VERSION}.apkm",
+        ),
+        filePattern = Regex("(?i).*word.*\\.(?:apk|apkm|xapk)$"),
+        patchDirectoryPart = "word",
+        referenceSha256 = Constants.WORD_INPUT_SHA256,
+    ),
     ;
 
     companion object {

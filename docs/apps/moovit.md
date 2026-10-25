@@ -10,13 +10,13 @@ Technical documentation and patch catalog for Moovit on Android.
 | :--- | :--- |
 | **Target App** | Moovit |
 | **Package Name** | `com.tranzmate` |
-| **Target Version** | `5.201.1.1809` |
+| **Target Version** | `5.203.0.1812` |
 | **Target Package Format** | APKM |
-| **Primary Architecture** | `universal` |
+| **Primary Architecture** | `arm64-v8a` |
 | **Authoritative Source** | APKMirror |
-| **Download Target** | [Moovit 5.201.1.1809 (universal, 160-640dpi, versionCode 1809 / BUNDLE 31 S, Sept 30)](https://www.apkmirror.com/apk/moovit/moovit-bus-train-live-info/moovit-your-transit-tracker-5-201-1-1809-release/moovit-your-transit-tracker-5-201-1-1809-2-android-apk-download/) |
+| **Download Target** | [Moovit 5.203.0.1812 (arm64-v8a, 160-640dpi, versionCode 1812 / BUNDLE 31 S)](https://www.apkmirror.com/apk/moovit/moovit-bus-train-live-info/moovit-your-transit-tracker-5-203-0-1812-release/moovit-your-transit-tracker-5-203-0-1812-android-apk-download/) |
 
-Note: `versionCode 1809` corresponds to the actual build versionCode assigned on APKMirror, not a trailing versionName fragment.
+Note: `versionCode 1812` corresponds to the actual build versionCode assigned on APKMirror, not a trailing versionName fragment.
 
 ---
 
@@ -112,11 +112,11 @@ Note: `versionCode 1809` corresponds to the actual build versionCode assigned on
 
 4. **Suppress Paywalls**:
    - **Objective**: Prevent subscription dialogs and upgrade popups from interrupting navigation.
-   - **How**: Bypasses onboarding upgrade flows, dismisses purchase dialogs, and hides premium promotional cards.
+   - **How**: Finishes `MoovitSubscriptionOnBoardingActivity` and `MoovitSubscriptionActivity` on creation, hides `MoovitSubscriptionMenuItemFragment` and help center menu items, dismisses `MoovitPlusPackagePopupFragment`, suppresses promo cells, and forces the `goPremiumCard` view to GONE visibility.
 
 5. **Unlock Moovit+**:
    - **Objective**: Enable Moovit+ premium features locally.
-   - **How**: Forces subscription status checks to return true and activates Safe Ride and favorite address search flags.
+   - **How**: Forces subscription status checks to return true, sets `SubscriptionPackage` state to `ACTIVE` on initialization, and activates Safe Ride and favorite address search flags.
 
 ---
 

@@ -246,4 +246,7 @@ internal val storageQuotaCheckFingerprint = Fingerprint(
     returnType = "Z",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC, AccessFlags.FINAL),
     parameters = listOf("Lcom/microsoft/office/identity/Identity;"),
+    custom = { _, classDef ->
+        classDef.type.startsWith("Lcom/microsoft/office/docsui/controls/unifiedStorageQuota/")
+    },
 )

@@ -736,6 +736,43 @@ fun main(args: Array<String>) {
                 }
                 println("[APKM] Merged ${splitDexes.size} DEX file(s) from split APK(s) into base.apk (total DEX files: $maxDexIndex)")
             }
+
+            val targetAbiPrefixes = listOf("lib/arm64-v8a/", "lib/armeabi-v7a/")
+            val existingEntries = mutableSetOf<String>()
+            java.util.zip.ZipFile(extractedBase).use { baseZip ->
+                baseZip.entries().asSequence().forEach { existingEntries.add(it.name) }
+            }
+
+            val splitNativeLibs = mutableListOf<Pair<String, ByteArray>>()
+            for (splitEntry in splitApkEntries) {
+                apkmZip.getInputStream(splitEntry).use { splitStream ->
+                    java.util.zip.ZipInputStream(splitStream).use { splitZip ->
+                        var entry = splitZip.nextEntry
+                        while (entry != null) {
+                            if (!entry.isDirectory && !entry.name.endsWith("/") && targetAbiPrefixes.any { entry.name.startsWith(it) }) {
+                                if (existingEntries.add(entry.name)) {
+                                    splitNativeLibs.add(entry.name to splitZip.readBytes())
+                                }
+                            }
+                            entry = splitZip.nextEntry
+                        }
+                    }
+                }
+            }
+
+            if (splitNativeLibs.isNotEmpty()) {
+                val uri = java.net.URI.create("jar:" + extractedBase.toURI())
+                val env = mapOf("create" to "false")
+                java.nio.file.FileSystems.newFileSystem(uri, env).use { fs ->
+                    for ((libName, libBytes) in splitNativeLibs) {
+                        val entryPath = fs.getPath(libName)
+                        entryPath.parent?.let { java.nio.file.Files.createDirectories(it) }
+                        java.nio.file.Files.write(entryPath, libBytes)
+                    }
+                }
+                val libWord = if (splitNativeLibs.size == 1) "library" else "libraries"
+                println("[APKM] Merged ${splitNativeLibs.size} native $libWord from split APK(s) into base.apk")
+            }
         }
         extractedBase
     } else {

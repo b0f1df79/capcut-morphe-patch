@@ -14,7 +14,10 @@ Technical documentation and patch catalog for IbisPaint X on Android.
 | **Target Version Code** | `1401020064` |
 | **Target Package Format** | XAPK bundle |
 | **Primary Architecture** | `arm64-v8a` |
-| **Authoritative Source** | APKPure |
+| **Authoritative Source** | APKPure (XAPK bundle) |
+
+> [!NOTE] Upstream Source Divergence
+> Automated update tracking (`scripts/check_app_updates.py`) queries APKMirror for release metadata because APKPure provides no stable or unauthenticated endpoints for programmatic checks. In contrast, candidate binaries for patching must be obtained as XAPK bundles from APKPure, as APKMirror binary downloads are subject to HTTP 451 legal restrictions in several jurisdictions.
 
 ---
 

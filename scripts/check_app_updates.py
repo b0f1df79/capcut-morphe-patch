@@ -225,6 +225,10 @@ APP_SPECS: List[Dict[str, Any]] = [
         "source_url": "https://github.com/d4rken-org/sdmaid-se/releases",
         "allow_beta": True,
     },
+    # Upstream source divergence: Version monitoring uses APKMirror HTML scraping
+    # because APKPure lacks stable, unauthenticated endpoints for programmatic checks.
+    # Patch candidate packages must be sourced as XAPK bundles from APKPure because
+    # APKMirror downloads return HTTP 451 (legal restriction) in multiple regions.
     {
         "id": "ibispaint",
         "name": "IbisPaint X",

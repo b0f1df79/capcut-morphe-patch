@@ -205,7 +205,7 @@ enum class TargetApp(
             "ibispaint.xapk",
             "ibispaint.apk",
         ),
-        filePattern = Regex("(?i).*(?:ibispaint|ibis.*paint).*\\.(?:apk|apkm|xapk)$"),
+        filePattern = Regex("(?i)^(?:jp\\.ne\\.ibis\\.ibispaintx\\.app|ibis[-_ ]paint(?:[-_ ]x)?|ibispaint)[-_0-9. ()]*\\.(?:apk|apkm|xapk)$"),
         patchDirectoryPart = "ibispaint",
         referenceSha256 = Constants.IBIS_PAINT_INPUT_SHA256,
     ),

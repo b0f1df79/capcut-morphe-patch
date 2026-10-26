@@ -8,6 +8,7 @@ import app.morphe.patches.shared.Constants.COMPATIBILITY_WORD
 import app.morphe.patches.shared.clearTryBlocks
 import app.morphe.patches.shared.ensureRegisterCount
 import app.morphe.patches.shared.replaceWithReturnVoid
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 
 @Suppress("unused")
 val wordUnlock365FamilyPatch = bytecodePatch(
@@ -130,8 +131,11 @@ val wordUnlock365FamilyPatch = bytecodePatch(
         accountSwitcherRunnableFingerprint.apply {
             val getActiveIdentityIdx = instructionMatches[1].index
             val moveResultIdx = getActiveIdentityIdx + 1
+            val moveResultIns = method.implementation?.instructions?.elementAtOrNull(moveResultIdx)
+            val reg = (moveResultIns as? OneRegisterInstruction)?.registerA
+                ?: error("[Unlock 365 Family] Could not extract register from instruction at index $moveResultIdx in ${method.definingClass}->${method.name}")
             method.addInstructionsWithLabels(moveResultIdx + 1, """
-                if-nez v12, :has_identity
+                if-nez v$reg, :has_identity
                 return-void
                 :has_identity
                 nop

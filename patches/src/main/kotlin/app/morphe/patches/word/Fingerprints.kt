@@ -43,22 +43,17 @@ internal val codeTransparencyCheckFingerprint = Fingerprint(
 
 // -- Login --------------------------------------------------------------------
 
-internal val firstRunM0Fingerprint = Fingerprint(
-    returnType = "V",
-    parameters = listOf("Z", "Lcom/microsoft/office/officehub/objectmodel/IOnTaskCompleteListener;"),
-    filters = listOf(
-        methodCall(
-            definingClass = "Lcom/microsoft/office/officehub/util/OHubSharedPreferences;",
-            name = "isFTUXShown",
-        ),
-    ),
-)
-
 internal val firstRunN0Fingerprint = Fingerprint(
     returnType = "V",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     parameters = emptyList(),
     strings = listOf(string("FRE Completed", StringComparisonType.EQUALS)),
+)
+
+internal val firstRunM0Fingerprint = Fingerprint(
+    classFingerprint = firstRunN0Fingerprint,
+    returnType = "V",
+    parameters = listOf("Z", "Lcom/microsoft/office/officehub/objectmodel/IOnTaskCompleteListener;"),
 )
 
 internal val ftuxPaywallLauncherFingerprint = Fingerprint(

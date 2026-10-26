@@ -155,49 +155,59 @@ jobs:
                   continue
 
               if len(matching_issues) > 1:
-                  extra_nums = [i.get("number") for i in matching_issues[1:]]
-                  print(f"[INFO] Multiple open issues found for {app_name}, handling first #{matching_issues[0].get('number')} and leaving others untouched: {extra_nums}")
+                  all_nums = [i.get("number") for i in matching_issues]
+                  print(f"[INFO] Multiple open issues found for {app_name} (#{all_nums}), inspecting and updating all.")
 
-              target_issue = matching_issues[0]
-              num = target_issue.get("number", "unknown")
-              target_title = target_issue.get("title", "")
-              issue_url = target_issue.get("url") or f"https://github.com/{repo}/issues/{num}"
+              already_reported = False
+              has_newer_reported = False
 
-              issue_remote = parse_issue_remote_version(target_title, app_name)
-              if not issue_remote:
-                  print(f"[WARN] Failed to parse remote version from open issue title for {app_name} (#{num}: {target_title}), skipping.")
-                  continue
+              for issue in matching_issues:
+                  num = issue.get("number", "unknown")
+                  target_title = issue.get("title", "")
+                  issue_url = issue.get("url") or f"https://github.com/{repo}/issues/{num}"
 
-              cmp_result = compare_app_versions(issue_remote, remote_ver)
-              if cmp_result == "inconclusive":
-                  print(f"[WARN] Version comparison inconclusive between issue remote '{issue_remote}' and current remote '{remote_ver}' for {app_name}, skipping.")
-                  continue
+                  issue_remote = parse_issue_remote_version(target_title, app_name)
+                  if not issue_remote:
+                      print(f"[WARN] Failed to parse remote version from open issue title for {app_name} (#{num}: {target_title}), skipping.")
+                      continue
 
-              if cmp_result == "equal":
-                  print(f"[INFO] Open issue already exists for {app_name} (#{num}: {target_title}), already reported, skipping.")
-                  continue
+                  cmp_result = compare_app_versions(issue_remote, remote_ver)
+                  if cmp_result == "inconclusive":
+                      print(f"[WARN] Version comparison inconclusive between issue remote '{issue_remote}' and current remote '{remote_ver}' for {app_name} (#{num}), skipping.")
+                      continue
 
-              if cmp_result == "older":
-                  print(f"[INFO] Current remote version {remote_ver} is older than open issue remote {issue_remote} for {app_name}, skipping.")
-                  continue
+                  if cmp_result == "equal":
+                      print(f"[INFO] Open issue already exists for {app_name} (#{num}: {target_title}), already reported.")
+                      already_reported = True
+                      continue
 
-              # cmp_result == "newer": roll forward
-              print(f"[INFO] Closing stale issue #{num} for {app_name} (superseded by {remote_ver})...")
-              close_comment = (
-                  f"Tracked remote was superseded by {remote_ver}.\n\n"
-                  f"Closing as completed [{num}]({issue_url})."
-              )
-              close_cmd = [
-                  "gh", "issue", "close", str(num),
-                  "--repo", repo,
-                  "--reason", "completed",
-                  "--comment", close_comment,
-              ]
-              close_res = subprocess.run(close_cmd, capture_output=True, text=True)
-              if close_res.returncode != 0:
-                  print(f"[WARN] Failed to close stale issue #{num} for {app_name}: {close_res.stderr.strip()}", file=sys.stderr)
-                  continue
+                  if cmp_result == "older":
+                      print(f"[INFO] Open issue #{num} has remote {issue_remote} which is newer than current remote {remote_ver} for {app_name}.")
+                      has_newer_reported = True
+                      continue
 
-              print(f"[INFO] Closed stale issue #{num} successfully.")
-              create_issue(repo, app_name, local_ver, remote_ver, source_url, download_url)
+                  # cmp_result == "newer": roll forward / close stale
+                  print(f"[INFO] Closing stale issue #{num} for {app_name} (remote {issue_remote} superseded by {remote_ver})...")
+                  close_comment = (
+                      f"Tracked remote was superseded by {remote_ver}.\n\n"
+                      f"Closing as completed [{num}]({issue_url})."
+                  )
+                  close_cmd = [
+                      "gh", "issue", "close", str(num),
+                      "--repo", repo,
+                      "--reason", "completed",
+                      "--comment", close_comment,
+                  ]
+                  close_res = subprocess.run(close_cmd, capture_output=True, text=True)
+                  if close_res.returncode != 0:
+                      print(f"[WARN] Failed to close stale issue #{num} for {app_name}: {close_res.stderr.strip()}", file=sys.stderr)
+                  else:
+                      print(f"[INFO] Closed stale issue #{num} successfully.")
+
+              if already_reported:
+                  print(f"[INFO] Skipping issue creation for {app_name}: already reported.")
+              elif has_newer_reported:
+                  print(f"[INFO] Skipping issue creation for {app_name}: newer version already reported in an open issue.")
+              else:
+                  create_issue(repo, app_name, local_ver, remote_ver, source_url, download_url)
           EOF

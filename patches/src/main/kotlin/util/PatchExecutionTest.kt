@@ -193,6 +193,22 @@ enum class TargetApp(
         patchDirectoryPart = "word",
         referenceSha256 = Constants.WORD_INPUT_SHA256,
     ),
+    IBISPAINT(
+        id = "ibispaint",
+        appName = "IbisPaint X",
+        packageName = Constants.IBIS_PAINT_PACKAGE_NAME,
+        candidateFilenames = listOf(
+            "ibis-paint-x-14-1-2 (1).xapk",
+            "ibis-paint-x_${Constants.IBIS_PAINT_TARGET_VERSION}.xapk",
+            "ibispaint_${Constants.IBIS_PAINT_TARGET_VERSION}.xapk",
+            "jp.ne.ibis.ibispaintx.app_${Constants.IBIS_PAINT_TARGET_VERSION}.xapk",
+            "ibispaint.xapk",
+            "ibispaint.apk",
+        ),
+        filePattern = Regex("(?i).*(?:ibispaint|ibis.*paint).*\\.(?:apk|apkm|xapk)$"),
+        patchDirectoryPart = "ibispaint",
+        referenceSha256 = Constants.IBIS_PAINT_INPUT_SHA256,
+    ),
     ;
 
     companion object {

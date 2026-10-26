@@ -225,6 +225,18 @@ APP_SPECS: List[Dict[str, Any]] = [
         "source_url": "https://github.com/d4rken-org/sdmaid-se/releases",
         "allow_beta": True,
     },
+    {
+        "id": "ibispaint",
+        "name": "IbisPaint X",
+        "package_name": "jp.ne.ibis.ibispaintx.app",
+        "constant_key": "IBIS_PAINT_TARGET_VERSION",
+        "run_patch_test_id": "ibispaint",
+        "source_type": "apkmirror",
+        "source_name": "APKMirror",
+        "source_url": "https://www.apkmirror.com/apk/ibis-inc/ibispaint-x/",
+        "path_prefix": "/apk/ibis-inc/ibispaint-x/ibis-paint-x-",
+        "allow_beta": False,
+    },
 ]
 
 # Build dependencies (toolchain components, not apps)

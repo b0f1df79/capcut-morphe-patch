@@ -234,4 +234,21 @@ object Constants {
             )
         )
     )
+
+    const val IBIS_PAINT_PACKAGE_NAME = "jp.ne.ibis.ibispaintx.app"
+    const val IBIS_PAINT_TARGET_VERSION = "14.1.2"
+    const val IBIS_PAINT_INPUT_SHA256 = ""
+
+    val COMPATIBILITY_IBIS_PAINT = Compatibility(
+        name = "IbisPaint X",
+        packageName = IBIS_PAINT_PACKAGE_NAME,
+        apkFileType = ApkFileType.XAPK,
+        appIconColor = 0x0B649B,
+        targets = listOf(
+            AppTarget(
+                version = IBIS_PAINT_TARGET_VERSION,
+                description = "Download jp.ne.ibis.ibispaintx.app v$IBIS_PAINT_TARGET_VERSION (XAPK bundle) from APKPure",
+            )
+        )
+    )
 }

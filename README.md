@@ -119,9 +119,9 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 
 **Supported versions:**
 
-| 12.36.1-prod.01 |
+| 12.37.2-prod.01 |
 | :---: |
-| Download com.twitter.android v12.36.1-prod.01 (APKM) arm64-v8a 120-640dpi versionCode 312361001 (BUNDLE 35 S) from APKMirror |
+| Download com.twitter.android v12.37.2-prod.01 (APKM) arm64-v8a 120-640dpi versionCode 312372001 (BUNDLE 35 S) from APKMirror |
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
@@ -185,9 +185,9 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 
 **Supported versions:**
 
-| 5.201.1.1809 |
+| 5.203.0.1812 |
 | :---: |
-| Download com.tranzmate v5.201.1.1809 (APKM) arm64-v8a 160-640dpi versionCode 1809 (BUNDLE 31 S) from APKMirror |
+| Download com.tranzmate v5.203.0.1812 (APKM) arm64-v8a 160-640dpi versionCode 1812 (BUNDLE 31 S) from APKMirror |
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
@@ -259,6 +259,26 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 </details>
 
 <details>
+<summary>Word&nbsp;&nbsp;•&nbsp;&nbsp;<b>5 patches</b></summary>
+<br>
+
+**Supported versions:**
+
+| 16.0.20527.20034 |
+| :---: |
+| Download com.microsoft.office.word v16.0.20527.20034 (APKM) arm64-v8a 120-480dpi versionCode 2005437911 from APKMirror |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| **Block Telemetry & Trackers** | Neutralizes Microsoft OneDS/Aria lifecycle, aggregated-metric and failure-logging dispatch methods, nullifies ad measurement platform identifiers (AIFA, AppSetId), disables HockeyApp and DataTransport components, and strips advertising permissions. |  |
+| **Bypass Code Transparency** | Bypasses the code transparency checks. |  |
+| **Disable Login Requirement** | Removes login requirement and FTUX paywall screens. |  |
+| **Remove Shared User ID** | Removes the sharedUserId attribute from the manifest to prevent installation conflicts. |  |
+| **Unlock 365 Family** | Unlocks Microsoft 365 Family subscription features locally. |  |
+
+</details>
+
+<details>
 <summary>Hevy - Gym Log Workout Tracker&nbsp;&nbsp;•&nbsp;&nbsp;<b>4 patches</b></summary>
 <br>
 
@@ -300,6 +320,22 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | **Unlock Sound Features** | Enables spatial audio and hearing features on all devices. |  |
 | **Unlock for Other Phones** | Enables full features on Samsung, Pixel, and other non-Xiaomi phones. |  |
 | **Update Without Account** | Lets guests check and install earbud firmware updates. |  |
+
+</details>
+
+<details>
+<summary>IbisPaint X&nbsp;&nbsp;•&nbsp;&nbsp;<b>1 patch</b></summary>
+<br>
+
+**Supported versions:**
+
+| 14.1.2 |
+| :---: |
+| Download jp.ne.ibis.ibispaintx.app v14.1.2 (XAPK bundle) from APKPure |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| **Enable Prime membership** | Enables app features locked behind the subscription paywall. |  |
 
 </details>
 

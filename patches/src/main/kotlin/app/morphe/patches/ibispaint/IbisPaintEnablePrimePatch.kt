@@ -16,15 +16,11 @@ val ibisPaintEnablePrimePatch = rawResourcePatch(
 
     execute {
         val libEntry = findArm64LibEntry(this)
-        if (libEntry == null) {
-            println("[Enable Prime membership] Skipped: arm64-v8a libibispaint.so not found in package.")
-            return@execute
-        }
+            ?: error("[Enable Prime membership] arm64-v8a libibispaint.so not found in package. An arm64-v8a split APK or merged bundle is required.")
 
         val libFile = get(libEntry)
         if (!libFile.isFile) {
-            println("[Enable Prime membership] Skipped: libibispaint.so could not be resolved on disk.")
-            return@execute
+            error("[Enable Prime membership] libibispaint.so could not be resolved on disk: $libEntry")
         }
 
         val fileLength = libFile.length()
@@ -33,14 +29,11 @@ val ibisPaintEnablePrimePatch = rawResourcePatch(
             IS_PROMO_OFFSET + IS_PROMO_EXPECTED.size,
         )
         if (fileLength < requiredLength) {
-            println("[Enable Prime membership] Skipped: libibispaint.so size ($fileLength bytes) smaller than required ($requiredLength bytes).")
-            return@execute
+            error("[Enable Prime membership] libibispaint.so size ($fileLength bytes) is smaller than required ($requiredLength bytes).")
         }
 
-        val patched = patchNativeBinary(libFile)
-        if (patched) {
-            println("[Enable Prime membership] Patched 2 native hooks in libibispaint.so -> Prime membership enabled.")
-        }
+        patchNativeBinary(libFile)
+        println("[Enable Prime membership] Patched 2 native hooks in libibispaint.so -> Prime membership enabled.")
     }
 }
 
@@ -91,34 +84,34 @@ private fun findArm64LibEntry(context: ResourcePatchContext): String? {
     return null
 }
 
-private fun patchNativeBinary(libFile: File): Boolean {
-    return try {
-        RandomAccessFile(libFile, "rw").use { raf ->
-            raf.seek(IS_FAILURE_OFFSET)
-            val failureBuf = ByteArray(IS_FAILURE_EXPECTED.size)
-            raf.readFully(failureBuf)
-            if (!failureBuf.contentEquals(IS_FAILURE_EXPECTED)) {
-                println("[Enable Prime membership] Skipped: Original bytes mismatch at isFailure offset 0x${IS_FAILURE_OFFSET.toString(16)}.")
-                return false
-            }
-
-            raf.seek(IS_PROMO_OFFSET)
-            val promoBuf = ByteArray(IS_PROMO_EXPECTED.size)
-            raf.readFully(promoBuf)
-            if (!promoBuf.contentEquals(IS_PROMO_EXPECTED)) {
-                println("[Enable Prime membership] Skipped: Original bytes mismatch at isPromotionalPrimeMember offset 0x${IS_PROMO_OFFSET.toString(16)}.")
-                return false
-            }
-
-            raf.seek(IS_FAILURE_OFFSET)
-            raf.write(IS_FAILURE_PATCH)
-
-            raf.seek(IS_PROMO_OFFSET)
-            raf.write(IS_PROMO_PATCH)
-            true
+private fun patchNativeBinary(libFile: File) {
+    RandomAccessFile(libFile, "rw").use { raf ->
+        raf.seek(IS_FAILURE_OFFSET)
+        val failureBuf = ByteArray(IS_FAILURE_EXPECTED.size)
+        raf.readFully(failureBuf)
+        if (!failureBuf.contentEquals(IS_FAILURE_EXPECTED)) {
+            error(
+                "[Enable Prime membership] Original bytes mismatch at isFailure offset 0x${IS_FAILURE_OFFSET.toString(16)} " +
+                    "(expected ${IS_FAILURE_EXPECTED.joinToString("") { "%02x".format(it) }}, " +
+                    "got ${failureBuf.joinToString("") { "%02x".format(it) }})."
+            )
         }
-    } catch (e: Exception) {
-        println("[Enable Prime membership] Skipped: Failed to patch libibispaint.so (${e.message}).")
-        false
+
+        raf.seek(IS_PROMO_OFFSET)
+        val promoBuf = ByteArray(IS_PROMO_EXPECTED.size)
+        raf.readFully(promoBuf)
+        if (!promoBuf.contentEquals(IS_PROMO_EXPECTED)) {
+            error(
+                "[Enable Prime membership] Original bytes mismatch at isPromotionalPrimeMember offset 0x${IS_PROMO_OFFSET.toString(16)} " +
+                    "(expected ${IS_PROMO_EXPECTED.joinToString("") { "%02x".format(it) }}, " +
+                    "got ${promoBuf.joinToString("") { "%02x".format(it) }})."
+            )
+        }
+
+        raf.seek(IS_FAILURE_OFFSET)
+        raf.write(IS_FAILURE_PATCH)
+
+        raf.seek(IS_PROMO_OFFSET)
+        raf.write(IS_PROMO_PATCH)
     }
 }

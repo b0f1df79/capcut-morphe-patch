@@ -186,7 +186,7 @@ enum class TargetApp(
         appName = "Word",
         packageName = Constants.WORD_PACKAGE_NAME,
         candidateFilenames = listOf(
-            "com.microsoft.office.word_16.0.20527.20034-2005437911_6dpi_24lang_59bd95dc67e5e1aca5e2f10d6a96bda8_apkmirror.com.apkm",
+            "com.microsoft.office.word_${Constants.WORD_TARGET_VERSION}-2005437911_6dpi_24lang_59bd95dc67e5e1aca5e2f10d6a96bda8_apkmirror.com.apkm",
             "word_${Constants.WORD_TARGET_VERSION}.apkm",
         ),
         filePattern = Regex("(?i).*word.*\\.(?:apk|apkm|xapk)$"),
@@ -198,7 +198,8 @@ enum class TargetApp(
         appName = "IbisPaint X",
         packageName = Constants.IBIS_PAINT_PACKAGE_NAME,
         candidateFilenames = listOf(
-            "ibis-paint-x-14-1-2 (1).xapk",
+            "ibis-paint-x-${Constants.IBIS_PAINT_TARGET_VERSION.replace('.', '-')}.xapk",
+            "ibis-paint-x-${Constants.IBIS_PAINT_TARGET_VERSION.replace('.', '-')} (1).xapk",
             "ibis-paint-x_${Constants.IBIS_PAINT_TARGET_VERSION}.xapk",
             "ibispaint_${Constants.IBIS_PAINT_TARGET_VERSION}.xapk",
             "jp.ne.ibis.ibispaintx.app_${Constants.IBIS_PAINT_TARGET_VERSION}.xapk",

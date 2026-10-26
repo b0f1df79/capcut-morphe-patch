@@ -32,12 +32,9 @@ val wordUnlock365FamilyPatch = bytecodePatch(
             patched++
         }
         licenseSessionStateFingerprint.method.apply {
-            clearTryBlocks()
-            ensureRegisterCount(1)
-            implementation?.let { removeInstructions(0, it.instructions.count()) }
             addInstructions(0, """
-                sget-object v0, Lcom/microsoft/office/licensing/LicensingState;->ConsumerPremium:Lcom/microsoft/office/licensing/LicensingState;
-                return-object v0
+                const/4 p1, 0x0
+                const/4 p3, 0x6
             """)
             patched++
         }

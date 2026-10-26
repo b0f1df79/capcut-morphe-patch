@@ -141,8 +141,8 @@ internal val licenseStatusIsPremiumFingerprint = Fingerprint(
 )
 
 internal val licenseSessionStateFingerprint = Fingerprint(
-    returnType = "Lcom/microsoft/office/licensing/LicensingState;",
-    parameters = emptyList(),
+    returnType = "V",
+    parameters = listOf("I", "I", "I"),
     filters = listOf(
         methodCall(
             definingClass = "Lcom/microsoft/office/licensing/LicensingState;",

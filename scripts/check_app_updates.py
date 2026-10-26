@@ -146,23 +146,6 @@ APP_SPECS: List[Dict[str, Any]] = [
         },
     },
     {
-        "id": "officehub",
-        "name": "Office Hub",
-        "package_name": "com.microsoft.office.officehubrow",
-        "constant_key": "OFFICEHUB_TARGET_VERSION",
-        "run_patch_test_id": "officehub",
-        "source_type": "apkmirror",
-        "source_name": "APKMirror",
-        "source_url": "https://www.apkmirror.com/apk/microsoft-corporation/office-mobile-2/",
-        "path_prefix": "/apk/microsoft-corporation/office-mobile-2/",
-        "allow_beta": False,
-        "variant_match": {
-            "arch": "arm64-v8a",
-            "dpi": "120-480dpi",
-            "type": "BUNDLE",
-        },
-    },
-    {
         "id": "hevy",
         "name": "Hevy",
         "package_name": "com.hevy",

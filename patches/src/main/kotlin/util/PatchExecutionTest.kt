@@ -96,17 +96,6 @@ enum class TargetApp(
         patchDirectoryPart = "capcut",
         referenceSha256 = Constants.CAPCUT_INPUT_SHA256,
     ),
-    OFFICEHUB(
-        id = "officehub",
-        appName = "Copilot",
-        packageName = Constants.OFFICEHUB_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "officehub_${Constants.OFFICEHUB_TARGET_VERSION}.apkm"
-        ),
-        filePattern = Regex("(?i).*(?:officehub|copilot).*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "officehub",
-        referenceSha256 = Constants.OFFICEHUB_INPUT_SHA256,
-    ),
     HEVY(
         id = "hevy",
         appName = "Hevy",

@@ -116,23 +116,6 @@ object Constants {
         )
     )
 
-    const val OFFICEHUB_PACKAGE_NAME = "com.microsoft.office.officehubrow"
-    const val OFFICEHUB_TARGET_VERSION = "16.0.20604.20012"
-    const val OFFICEHUB_INPUT_SHA256 = "09b0ba87a2d8e630c5bc1b807b3f9cb7db3135f2e8d582fe51fdf923bf3c1201"
-
-    val COMPATIBILITY_OFFICEHUB = Compatibility(
-        name = "Copilot",
-        packageName = OFFICEHUB_PACKAGE_NAME,
-        apkFileType = ApkFileType.APKM,
-        appIconColor = 0x109CF0,
-        targets = listOf(
-            AppTarget(
-                version = OFFICEHUB_TARGET_VERSION,
-                description = "Download $OFFICEHUB_PACKAGE_NAME v$OFFICEHUB_TARGET_VERSION (APKM) arm64-v8a 120-480dpi versionCode 45489613 (BUNDLE 32 S) from APKMirror",
-            )
-        )
-    )
-
     const val HEVY_PACKAGE_NAME = "com.hevy"
     const val HEVY_TARGET_VERSION = "3.2.2"
     const val HEVY_INPUT_SHA256 = ""

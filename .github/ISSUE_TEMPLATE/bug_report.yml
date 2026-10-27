@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Search [existing bug reports](https://github.com/kveld9/kveld-extra-morphe-patches/issues?q=label%3A%22Bug+report%22) before opening a new one.
+        Search [existing bug reports](https://github.com/b0f1df79/capcut-morphe-patche/issues?q=label%3A%22Bug+report%22) before opening a new one.
   - type: input
     id: app
     attributes:

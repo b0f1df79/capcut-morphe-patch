@@ -1,3 +1,18 @@
+## [1.29.0](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.28.0...v1.29.0) (2026-10-27)
+
+### ⚠ BREAKING CHANGES
+
+* **officehub:** drop Microsoft 365 patch target
+
+### Bug Fixes
+
+* **test:** reject unsafe archive entry names in patch test runner ([8f2e06c](https://github.com/kveld9/kveld-extra-morphe-patches/commit/8f2e06c05d6a62b3d7378504b9f118fcf1c56ca7))
+
+### New Features
+
+* **capcut:** neutralize Google Play Billing for devices without GMS ([4e583ae](https://github.com/kveld9/kveld-extra-morphe-patches/commit/4e583aeb6c40f07c3f5a19b0e26ea7965b5ba27f))
+* **officehub:** drop Microsoft 365 patch target ([04549ec](https://github.com/kveld9/kveld-extra-morphe-patches/commit/04549ecb1677478182c7351831267438516f224c))
+
 ## [1.28.0](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.27.1...v1.28.0) (2026-10-26)
 
 ### Bug Fixes

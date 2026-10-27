@@ -153,7 +153,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 </details>
 
 <details>
-<summary>CapCut&nbsp;&nbsp;•&nbsp;&nbsp;<b>12 patches</b></summary>
+<summary>CapCut&nbsp;&nbsp;•&nbsp;&nbsp;<b>13 patches</b></summary>
 <br>
 
 **Supported versions:**
@@ -171,6 +171,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | **Bypass Unsafe Package Modal** | Replaces the unsafe-package modal fallback URL in the Lynx schema defaults with the real template portal URL so region-blocked or untrusted-client fallbacks open templates instead of the blocking security notice. |  |
 | **Locale Assets Slimmer** | Strips unselected CapCut asset locale bundles (assets/locales/*.json) from the APK. English is always preserved. For res/values-* string tables use the canonical universal Remove Extra Languages patch. | • Locales to keep |
 | **Native Bloat Slimmer** | Strips non-essential companion native libraries by zeroing bytes in-situ. Always zeroes AppLovin ad crash reporter. WARNING: Stripping speech recognition and synthesis engines (libspeech*.so) disables voice recognition, voiceover captions, and speech-to-text features. | • Trim Speech Engines (Breaks Voice Features) |
+| **Neutralize Play Billing** | Stubs Google Play Billing client calls and disables billing manifest components for graceful degradation on devices without GMS. |  |
 | **Redirect API to v2 Boot** | Loads effects, feeds and templates where default endpoints are blocked by using official alternate endpoints. |  |
 | **Remove Watermark** | Forces CapCut watermark-removal gates and default ending gate to allow export without watermark or outro. |  |
 | **Unlock Premium** | Forces CapCut VIP gates to return true (SubscribeImpl, PayVipImpl, UserVipInfo, UserDetailInfo, VipUserServiceImpl, SubscribeCloudImpl) plus central account status flags (BusinessManager). Cloud-gated assets may still fail. |  |
@@ -196,24 +197,6 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | **Remove Ads** | Hides banner and inline ads and neutralizes ad unit ID lookups. |  |
 | **Suppress Paywalls** | Suppresses subscription paywalls, onboarding upgrade dialogs, and promotional cards. |  |
 | **Unlock Moovit+** | Unlocks Moovit+ premium subscription features locally, including Safe Ride and address search in favorites. |  |
-
-</details>
-
-<details>
-<summary>Copilot&nbsp;&nbsp;•&nbsp;&nbsp;<b>3 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 16.0.20604.20012 |
-| :---: |
-| Download com.microsoft.office.officehubrow v16.0.20604.20012 (APKM) arm64-v8a 120-480dpi versionCode 45489613 (BUNDLE 32 S) from APKMirror |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Block Telemetry & Trackers** | Neutralizes Microsoft OneDS/Aria aggregated-metric and failure-logging dispatch methods, stubs Singular attribution SDK initializers and dispatchers, nullifies ad measurement platform identifiers (AIFA, AppSetId), rewrites default telemetry endpoints inside telemetry packages and custom blocked hosts unscoped to 0.0.0.0, disables cross-sell, Floodgate, HockeyApp and DataTransport components, and strips advertising and preinstall attribution permissions. | • Custom Blocked Hosts |
-| **Bypass Code Transparency** | Skips the code-transparency failure dialog and reports local verification success, unblocking sideloaded installs. |  |
-| **Copilot Companion Native Slimmer** | Strips optional companion native binaries (React Native, Hermes, SlimCV) via in-situ zeroing. WARNING: Hermes and React Native are load-bearing for React Native initialization - enabling this WILL crash Copilot React Native surfaces (Copilot chat host) with UnsatisfiedLinkError. The HockeyApp native exception handler (proven UnsatisfiedLinkError in OfficeApplication.onMAMCreate) and voice/dictation SDKs (libofficevoicesdk, libofficevoicetranscriptionsdk; proven dlopen FATAL on boot path) are load-bearing at startup and are therefore never stripped. |  |
 
 </details>
 
@@ -434,7 +417,6 @@ For bug reports, patch inquiries, or feature proposals, open an issue using the 
 | Contributor | Role & Contributions |
 | :--- | :--- |
 | <a href="https://github.com/aeries0x"><img src="https://github.com/aeries0x.png" alt="@aeries0x" width="48" height="48" style="border-radius: 50%;" /><br><b>@aeries0x</b></a> | Feature request: Proposed X – Default reply sorting (open replies sorted by Likes) feature request ([#12](https://github.com/kveld9/kveld-extra-morphe-patches/issues/12)). |
-| <a href="https://github.com/TheJNXx"><img src="https://github.com/TheJNXx.png" alt="@TheJNXx" width="48" height="48" style="border-radius: 50%;" /><br><b>@TheJNXx</b></a> | Feature request: Requested Microsoft Word patches (telemetry removal, premium unlock, login requirement removal) ([#36](https://github.com/kveld9/kveld-extra-morphe-patches/issues/36)). |
 <!-- CONTRIBUTORS_END -->
 
 <p align="center"><a href="#top"><b>&uarr; Back to top</b></a></p>

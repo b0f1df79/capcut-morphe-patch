@@ -38,52 +38,6 @@ enum class TargetApp(
     //     patchDirectoryPart = "example",
     //     referenceSha256 = Constants.EXAMPLE_INPUT_SHA256,
     // ),
-    INSTAGRAM(
-        id = "instagram",
-        appName = "Instagram",
-        packageName = Constants.INSTAGRAM_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "com.instagram.android_447.0.0.55.81-385311895_1dpi_af3be75e29a3de479232e9e7978c0003_apkmirror.com.apkm",
-            "instagram_${Constants.INSTAGRAM_TARGET_VERSION}.apkm"
-        ),
-        filePattern = Regex("(?i).*instagram.*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "instagram",
-        referenceSha256 = Constants.INSTAGRAM_INPUT_SHA256,
-    ),
-    TWITTER(
-        id = "twitter",
-        appName = "X",
-        packageName = Constants.TWITTER_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "twitter_${Constants.TWITTER_TARGET_VERSION}.apkm"
-        ),
-        filePattern = Regex("(?i).*twitter.*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "twitter",
-        referenceSha256 = Constants.TWITTER_INPUT_SHA256,
-    ),
-    MOOVIT(
-        id = "moovit",
-        appName = "Moovit",
-        packageName = Constants.MOOVIT_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "moovit_${Constants.MOOVIT_TARGET_VERSION}.apkm"
-        ),
-        filePattern = Regex("(?i).*(?:moovit|tranzmate).*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "moovit",
-        referenceSha256 = Constants.MOOVIT_INPUT_SHA256,
-    ),
-    POWERPOINT(
-        id = "powerpoint",
-        appName = "PowerPoint",
-        packageName = Constants.POWERPOINT_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "com.microsoft.office.powerpoint_16.0.20527.20034-2005437911_6dpi_24lang_ceed622e984560b84797e53e8db5221e_apkmirror.com.apkm",
-            "powerpoint_${Constants.POWERPOINT_TARGET_VERSION}.apkm"
-        ),
-        filePattern = Regex("(?i).*powerpoint.*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "powerpoint",
-        referenceSha256 = Constants.POWERPOINT_INPUT_SHA256,
-    ),
     CAPCUT(
         id = "capcut",
         appName = "CapCut",
@@ -96,129 +50,18 @@ enum class TargetApp(
         patchDirectoryPart = "capcut",
         referenceSha256 = Constants.CAPCUT_INPUT_SHA256,
     ),
-    HEVY(
-        id = "hevy",
-        appName = "Hevy",
-        packageName = Constants.HEVY_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "com.hevy_${Constants.HEVY_TARGET_VERSION}.apk",
-            "com.hevy_${Constants.HEVY_TARGET_VERSION}.apkm",
-        ),
-        filePattern = Regex("(?i).*hevy.*\\.(?:apk|apkm)$"),
-        patchDirectoryPart = "hevy",
-        referenceSha256 = Constants.HEVY_INPUT_SHA256,
-    ),
-    NOKOPRINT(
-        id = "nokoprint",
-        appName = "NokoPrint",
-        packageName = Constants.NOKOPRINT_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "nokoprint_${Constants.NOKOPRINT_TARGET_VERSION}_orig.xapk",
-            "NokoPrint+-+Print+from+Phone_${Constants.NOKOPRINT_TARGET_VERSION}_APKPure.xapk",
-            "com.nokoprint_${Constants.NOKOPRINT_TARGET_VERSION}.xapk",
-            "com.nokoprint_${Constants.NOKOPRINT_TARGET_VERSION}.apk",
-            "nokoprint_${Constants.NOKOPRINT_TARGET_VERSION}.apk",
-            "nokoprint.xapk",
-            "nokoprint.apk",
-        ),
-        filePattern = Regex("(?i).*nokoprint.*\\.(?:apk|xapk)$"),
-        patchDirectoryPart = "nokoprint",
-        referenceSha256 = Constants.NOKOPRINT_INPUT_SHA256,
-    ),
-    XIAOMI_EARBUDS(
-        id = "xiaomi_earbuds",
-        appName = "Xiaomi Earbuds",
-        packageName = Constants.XIAOMI_EARBUDS_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "Xiaomi+Earbuds_${Constants.XIAOMI_EARBUDS_TARGET_VERSION}_APKPure.xapk",
-            "Xiaomi+Earbuds_${Constants.XIAOMI_EARBUDS_TARGET_VERSION}.xapk",
-            "com.mi.earphone_${Constants.XIAOMI_EARBUDS_TARGET_VERSION}.xapk",
-            "com.mi.earphone_${Constants.XIAOMI_EARBUDS_TARGET_VERSION}.apkm",
-            "com.mi.earphone_${Constants.XIAOMI_EARBUDS_TARGET_VERSION}.apk",
-            "xiaomi_earbuds.xapk",
-            "xiaomi_earbuds.apkm",
-            "xiaomi_earbuds.apk",
-            "earphone.xapk",
-            "earphone.apkm",
-            "earphone.apk",
-        ),
-        filePattern = Regex("(?i).*(?:earphone|earbuds).*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "xiaomi",
-        referenceSha256 = Constants.XIAOMI_EARBUDS_INPUT_SHA256,
-    ),
-    SUBE(
-        id = "sube",
-        appName = "SUBE",
-        packageName = Constants.SUBE_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "sube_${Constants.SUBE_TARGET_VERSION}.xapk",
-            "SUBE_${Constants.SUBE_TARGET_VERSION}_APKPure.xapk",
-        ),
-        filePattern = Regex("(?i).*(?:sube).*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "sube",
-        referenceSha256 = Constants.SUBE_INPUT_SHA256,
-    ),
-    SDMSE(
-        id = "sdmse",
-        appName = "SD Maid SE",
-        packageName = Constants.SDMSE_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "eu.darken.sdmse_2.2.2.apk",
-            "sdmse_${Constants.SDMSE_TARGET_VERSION}.apk",
-        ),
-        filePattern = Regex("(?i).*(?:sdmse|sdmaid).*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "sdmse",
-        referenceSha256 = Constants.SDMSE_INPUT_SHA256,
-    ),
-    WORD(
-        id = "word",
-        appName = "Word",
-        packageName = Constants.WORD_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "com.microsoft.office.word_${Constants.WORD_TARGET_VERSION}-2005437911_6dpi_24lang_59bd95dc67e5e1aca5e2f10d6a96bda8_apkmirror.com.apkm",
-            "word_${Constants.WORD_TARGET_VERSION}.apkm",
-        ),
-        filePattern = Regex("(?i).*word.*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "word",
-        referenceSha256 = Constants.WORD_INPUT_SHA256,
-    ),
-    IBISPAINT(
-        id = "ibispaint",
-        appName = "IbisPaint X",
-        packageName = Constants.IBIS_PAINT_PACKAGE_NAME,
-        candidateFilenames = listOf(
-            "ibis-paint-x-${Constants.IBIS_PAINT_TARGET_VERSION.replace('.', '-')}.xapk",
-            "ibis-paint-x-${Constants.IBIS_PAINT_TARGET_VERSION.replace('.', '-')} (1).xapk",
-            "ibis-paint-x_${Constants.IBIS_PAINT_TARGET_VERSION}.xapk",
-            "ibispaint_${Constants.IBIS_PAINT_TARGET_VERSION}.xapk",
-            "jp.ne.ibis.ibispaintx.app_${Constants.IBIS_PAINT_TARGET_VERSION}.xapk",
-            "ibispaint.xapk",
-            "ibispaint.apk",
-        ),
-        filePattern = Regex("(?i)^(?:jp\\.ne\\.ibis\\.ibispaintx\\.app|ibis[-_ ]paint(?:[-_ ]x)?|ibispaint)[-_0-9. ()]*\\.(?:apk|apkm|xapk)$"),
-        patchDirectoryPart = "ibispaint",
-        referenceSha256 = Constants.IBIS_PAINT_INPUT_SHA256,
-    ),
     ;
 
     companion object {
         fun fromId(raw: String): TargetApp? {
             val normalized = raw.trim().lowercase().replace("-", "_")
             return entries.firstOrNull { it.id == normalized }
-                ?: when (normalized) {
-                    "earbuds", "earphone", "xiaomi" -> XIAOMI_EARBUDS
-                    else -> null
-                }
+                ?: if (normalized in setOf("capcut", "lemon.lvoverseas")) CAPCUT else null
         }
 
         fun fromFileName(fileName: String): TargetApp? {
             val lower = fileName.lowercase()
-            return when {
-                lower.contains("hevy") -> HEVY
-                lower.contains("nokoprint") -> NOKOPRINT
-                lower.contains("earphone") || lower.contains("earbuds") -> XIAOMI_EARBUDS
-                else -> entries.firstOrNull { lower.contains(it.id) || it.filePattern.containsMatchIn(fileName) }
-            }
+            return entries.firstOrNull { lower.contains(it.id) || it.filePattern.containsMatchIn(fileName) }
         }
     }
 }

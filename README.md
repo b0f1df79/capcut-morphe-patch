@@ -96,63 +96,6 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 
 <!-- PATCHES_START -->
 <details>
-<summary>Instagram&nbsp;&nbsp;•&nbsp;&nbsp;<b>3 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 447.0.0.55.81 |
-| :---: |
-| Download com.instagram.android v447.0.0.55.81 (APKM) arm64-v8a 120-480dpi versionCode 385311891 (BUNDLE3 S) from APKMirror |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **AR Effects Slimmer** | Strips ARCore native binaries (libarcore_sdk_c.so, libarcore_sdk_jni.so) and AR effect/face tracking asset models. WARNING: Disables camera AR filters, 3D face effects, and body/face tracking. |  |
-| **Block Crash & Diagnostics** | Neutralizes crash-dump uploaders, Lacrima detector broadcasts, debug diagnostics, carrier preload trackers, and lead-ads entrypoints. |  |
-| **Block Telemetry & Trackers** | Neutralizes Facebook Analytics2, DataTransport, FDID/PhoneId providers, and strips AD_ID permissions. |  |
-
-</details>
-
-<details>
-<summary>X&nbsp;&nbsp;•&nbsp;&nbsp;<b>2 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 12.37.2-prod.01 |
-| :---: |
-| Download com.twitter.android v12.37.2-prod.01 (APKM) arm64-v8a 120-640dpi versionCode 312372001 (BUNDLE 35 S) from APKMirror |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Background Slimmer** | Disables background periodic jobs, home screen widgets, and companion services to reduce resource usage. |  |
-| **Block Telemetry & Trackers** | Blocks tracking services, analytics collection, and advertising identifiers, redirects Braze and Sentry endpoints to 0.0.0.0, and purges Sentry manifest metadata. | • Block Payments & Anti-Fraud Telemetry |
-
-</details>
-
-<details>
-<summary>NokoPrint - WiFi, Bluetooth, USB&nbsp;&nbsp;•&nbsp;&nbsp;<b>7 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 5.28.6 |
-| :---: |
-| Download com.nokoprint v5.28.6 (XAPK bundle) from APKPure |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Block Ads** | Blocks ad loaders and unlocks ad-free status. |  |
-| **Block Trackers** | Blocks analytics and ad tracking. |  |
-| **Printer-Compatible Connections** | Keeps HTTP cleartext for LAN printers and driver downloads and trusts user certificates. Less strict than stock; on by default because some printers need it, disable for maximum strictness. |  |
-| **Remove Extra Files** | Deletes hidden ad files and trackers to shrink the app. |  |
-| **Remove Extra Stores** | Disables payment components for other app stores you do not use. |  |
-| **Skip Welcome Screen** | Skips the first-launch popup (the About menu still works). |  |
-| **Stop Background Sync** | Stops background tasks that drain the battery. |  |
-
-</details>
-
-<details>
 <summary>CapCut&nbsp;&nbsp;•&nbsp;&nbsp;<b>13 patches</b></summary>
 <br>
 
@@ -179,166 +122,6 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | **Unlock Ultra HD Export** | Forces CapCut Ultra HD / high-resolution export gates to unlocked so 4K export options stay available. |  |
 
 </details>
-
-<details>
-<summary>Moovit&nbsp;&nbsp;•&nbsp;&nbsp;<b>6 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 5.203.0.1812 |
-| :---: |
-| Download com.tranzmate v5.203.0.1812 (APKM) arm64-v8a 160-640dpi versionCode 1812 (BUNDLE 31 S) from APKMirror |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Block Telemetry & Trackers** | Neutralizes AppsFlyer, Braze, and Inneractive DEX dispatchers, disables analytics services/providers, and strips advertising permissions. |  |
-| **Fix Google Maps** | Restores Google Maps rendering by spoofing the original package signature to Google Play Services. | • Google Maps Platform API key<br>• Force Google Maps engine |
-| **Remove Ads** | Hides banner and inline ads and neutralizes ad unit ID lookups. |  |
-| **Suppress Paywalls** | Suppresses subscription paywalls, onboarding upgrade dialogs, and promotional cards. |  |
-| **Unlock Moovit+** | Unlocks Moovit+ premium subscription features locally, including Safe Ride and address search in favorites. |  |
-| **Use Places API (New)** | Switches search autocomplete from Places API (Legacy) to Places API (New). Legacy Places is not available in new Cloud projects. Requires Places API (New) to be enabled for the API key. |  |
-
-</details>
-
-<details>
-<summary>PowerPoint&nbsp;&nbsp;•&nbsp;&nbsp;<b>6 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 16.0.20527.20034 |
-| :---: |
-| Download com.microsoft.office.powerpoint v16.0.20527.20034 (APKM) arm64-v8a 120-480dpi versionCode 2005437911 (BUNDLE 5 S) from APKMirror |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Block Telemetry & Trackers** | Neutralizes Microsoft OneDS/Aria lifecycle, aggregated-metric and failure-logging dispatch methods, nullifies ad measurement platform identifiers (AIFA, AppSetId), disables HockeyApp activities and DataTransport components, and strips advertising permissions. |  |
-| **Bypass Code Transparency** | Bypasses the code transparency checks. |  |
-| **Disable Login Requirement** | Removes login requirement and FTUX paywall screens. |  |
-| **PowerPoint Companion Native Slimmer** | Strips optional companion native binaries (React Native and Hermes JavaScript runtime stack) via in-situ zeroing. WARNING: stripped libraries are load-bearing for React Native initialization - enabling this WILL crash the app with UnsatisfiedLinkError when Copilot or other React Native surfaces start, not merely hide those features. |  |
-| **Remove Shared User ID** | Removes the sharedUserId attribute from the manifest to prevent installation conflicts. |  |
-| **Unlock 365 Family** | Unlocks Microsoft 365 Family subscription features locally. |  |
-
-</details>
-
-<details>
-<summary>SUBE&nbsp;&nbsp;•&nbsp;&nbsp;<b>5 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 2.7.25 |
-| :---: |
-| Download com.sube.app v2.7.25 (XAPK bundle) from APKPure |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Block Telemetry & Trackers** | Neutralizes Google AppMeasurement, Firebase Analytics, and Firebase Crashlytics event dispatchers at bytecode entrypoints. |  |
-| **Bypass SUBE NFC antenna check** | Bypasses the com.nxp.mifare system feature check in SUBE so the app runs on devices whose ROM does not declare NXP Mifare support. |  |
-| **Cut Firebase Entirely** | Rewrites the Firebase Installations API endpoint (firebaseinstallations.googleapis.com) to 0.0.0.0 in DEX bytecode across all classes, severing background FID registration and installation auth tokens. WARNING: Breaks push notifications (FCM) and cloud messaging. |  |
-| **Cut Firebase Manifest** | Disables Firebase Cloud Messaging services and instance ID receivers in AndroidManifest.xml. Breaks push notifications and FCM background delivery. |  |
-| **SUBE Telemetry Manifest Purge** | Strips advertising permissions, disables measurement services, providers, and install receivers, and injects opt-out metadata flags in AndroidManifest.xml. |  |
-
-</details>
-
-<details>
-<summary>Word&nbsp;&nbsp;•&nbsp;&nbsp;<b>5 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 16.0.20527.20034 |
-| :---: |
-| Download com.microsoft.office.word v16.0.20527.20034 (APKM) arm64-v8a 120-480dpi versionCode 2005437911 from APKMirror |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Block Telemetry & Trackers** | Neutralizes Microsoft OneDS/Aria lifecycle, aggregated-metric and failure-logging dispatch methods, nullifies ad measurement platform identifiers (AIFA, AppSetId), disables HockeyApp and DataTransport components, and strips advertising permissions. |  |
-| **Bypass Code Transparency** | Bypasses the code transparency checks. |  |
-| **Disable Login Requirement** | Removes login requirement and FTUX paywall screens. |  |
-| **Remove Shared User ID** | Removes the sharedUserId attribute from the manifest to prevent installation conflicts. |  |
-| **Unlock 365 Family** | Unlocks Microsoft 365 Family subscription features locally. |  |
-
-</details>
-
-<details>
-<summary>Hevy - Gym Log Workout Tracker&nbsp;&nbsp;•&nbsp;&nbsp;<b>4 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 3.2.2 |
-| :---: |
-| Download com.hevy v3.2.2 (APKM) arm64-v8a 120-640dpi versionCode 3308730 (BUNDLE) from APKMirror |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Block Trackers** | Blocks crash reporting, ad attribution and referral tracking. |  |
-| **Remove Extra Files** | Deletes tutorial videos, editor stickers and junk to shrink the app. |  |
-| **Stop Background Sync** | Stops background sync tasks and alarms that drain the battery. |  |
-| **Unlock Pro** | Unlocks Pro features stored on the device (routines, folders, charts). Server-limited items may still need a subscription. |  |
-
-</details>
-
-<details>
-<summary>Xiaomi Earbuds&nbsp;&nbsp;•&nbsp;&nbsp;<b>11 patches</b></summary>
-<br>
-
-**Supported versions:**
-
-| 1.38.0i |
-| :---: |
-| Download com.mi.earphone v1.38.0i (XAPK bundle) from APKPure |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Block Trackers** | Stops analytics and usage reporting. |  |
-| **Device Privacy Guard** | Hides hardware IDs and lets Bluetooth work without location. |  |
-| **Offline Only** | Fully disconnects the app from the internet. Pair your earbuds first. |  |
-| **Run on Rooted Devices** | Lets the app run on rooted phones and network tools without crashing. |  |
-| **Safer Connections** | Blocks unencrypted traffic and disables certificate pinning. |  |
-| **Show All Models** | Shows every earbud model for pairing. |  |
-| **Skip Popups & Tutorials** | Skips startup agreements, tutorials, and promo banners. |  |
-| **Stop Background Activity** | Stops persistent notifications and background battery drain. |  |
-| **Unlock Sound Features** | Enables spatial audio and hearing features on all devices. |  |
-| **Unlock for Other Phones** | Enables full features on Samsung, Pixel, and other non-Xiaomi phones. |  |
-| **Update Without Account** | Lets guests check and install earbud firmware updates. |  |
-
-</details>
-
-<details>
-<summary>IbisPaint X&nbsp;&nbsp;•&nbsp;&nbsp;<b>1 patch</b></summary>
-<br>
-
-**Supported versions:**
-
-| 14.1.2 |
-| :---: |
-| Download jp.ne.ibis.ibispaintx.app v14.1.2 (XAPK bundle) from APKPure |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Enable Prime membership** | Enables app features locked behind the subscription paywall. |  |
-
-</details>
-
-<details>
-<summary>SD Maid SE&nbsp;&nbsp;•&nbsp;&nbsp;<b>1 patch</b></summary>
-<br>
-
-**Supported versions:**
-
-| 2.2.2-rc0 |
-| :---: |
-| Download eu.darken.sdmse v2.2.2-rc0 (APK) FOSS-RELEASE versionCode 20202000 |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| **Unlock Pro** | Unlocks SD Maid SE Pro features. |  |
-
-</details>
-
 <!-- PATCHES_END -->
 
 <p align="center"><a href="#top"><b>&uarr; Back to top</b></a></p>
@@ -361,17 +144,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 
 | App | Guide |
 | :--- | :--- |
-| Instagram | [Guide](docs/apps/instagram.md) |
-| X | [Guide](docs/apps/twitter.md) |
-| Moovit | [Guide](docs/apps/moovit.md) |
-| PowerPoint | [Guide](docs/apps/powerpoint.md) |
 | CapCut | [Guide](docs/apps/capcut.md) |
-| Copilot | [Guide](docs/apps/officehub.md) |
-| Hevy | [Guide](docs/apps/hevy.md) |
-| NokoPrint | [Guide](docs/apps/nokoprint.md) |
-| Xiaomi Earbuds | [Guide](docs/apps/xiaomi_earbuds.md) |
-| SUBE | [Guide](docs/apps/sube.md) |
-| SD Maid SE | [Guide](docs/apps/sdmse.md) |
 
 <p align="center"><a href="#top"><b>&uarr; Back to top</b></a></p>
 
@@ -383,7 +156,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 Before proposing new features, review the [Project Scope](docs/out-of-scope.md). Every patch change must pass the in-situ verification gate with 0 failed patches, 0 fingerprint mismatches, and 0 smali compile errors:
 
 ```bash
-./gradlew runPatchTest -Papp=<targetApp>   # targetApp is the app id (see docs/apps/)
+./gradlew runPatchTest -Papp=capcut
 ./gradlew check
 ```
 

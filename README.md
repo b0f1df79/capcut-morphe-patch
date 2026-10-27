@@ -122,6 +122,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | **Unlock Ultra HD Export** | Forces CapCut Ultra HD / high-resolution export gates to unlocked so 4K export options stay available. |  |
 
 </details>
+
 <!-- PATCHES_END -->
 
 <p align="center"><a href="#top"><b>&uarr; Back to top</b></a></p>
@@ -190,8 +191,8 @@ For bug reports, patch inquiries, or feature proposals, open an issue using the 
 <!-- CONTRIBUTORS_START -->
 | Contributor | Role & Contributions |
 | :--- | :--- |
-| <a href="https://github.com/aeries0x"><img src="https://github.com/aeries0x.png" alt="@aeries0x" width="48" height="48" style="border-radius: 50%;" /><br><b>@aeries0x</b></a> | Feature request: Proposed X – Default reply sorting (open replies sorted by Likes) feature request ([#12](https://github.com/b0f1df79/capcut-morphe-patche/issues/12)). |
-| <a href="https://github.com/springfurst"><img src="https://github.com/springfurst.png" alt="@springfurst" width="48" height="48" style="border-radius: 50%;" /><br><b>@springfurst</b></a> | Contributed the Use Places API (New) Moovit search patch ([#44](https://github.com/b0f1df79/capcut-morphe-patche/pull/44)). |
+| <a href="https://github.com/aeries0x"><img src="https://github.com/aeries0x.png" alt="@aeries0x" width="48" height="48" style="border-radius: 50%;" /><br><b>@aeries0x</b></a> | Feature request: Proposed X – Default reply sorting (open replies sorted by Likes) feature request ([#12](https://github.com/b0f1df79/capcut-morphe-patch/issues/12)). |
+| <a href="https://github.com/springfurst"><img src="https://github.com/springfurst.png" alt="@springfurst" width="48" height="48" style="border-radius: 50%;" /><br><b>@springfurst</b></a> | Contributed the Use Places API (New) Moovit search patch ([#44](https://github.com/kveld9/kveld-extra-morphe-patches/pull/44)). |
 <!-- CONTRIBUTORS_END -->
 
 <p align="center"><a href="#top"><b>&uarr; Back to top</b></a></p>

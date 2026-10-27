@@ -226,6 +226,24 @@ enum class TargetApp(
 // Tuning default for the warning only.
 private const val DEFAULT_SLOW_PATCH_SECONDS = 15.0
 
+private fun safeZipEntryName(raw: String, allowedPrefixes: List<String>? = null): String? {
+    if (raw.isBlank() || raw.contains('\u0000')) return null
+    if (raw.startsWith('/') || raw.startsWith('\\')) return null
+    if (raw.length >= 2 && ((raw[0] in 'A'..'Z') || (raw[0] in 'a'..'z')) && raw[1] == ':') return null
+    if (raw.endsWith('/') || raw.endsWith('\\')) return null
+    val rawSegments = raw.split('/', '\\')
+    if (rawSegments.any { it == ".." }) return null
+    val segments = rawSegments.filter { it.isNotEmpty() && it != "." }
+    if (segments.isEmpty()) return null
+    val normalized = segments.joinToString("/")
+    if (allowedPrefixes != null) {
+        val matchedPrefix = allowedPrefixes.firstOrNull { normalized.startsWith(it) } ?: return null
+        val remainder = normalized.substring(matchedPrefix.length)
+        if (remainder.isEmpty() || remainder.startsWith('/')) return null
+    }
+    return normalized
+}
+
 private fun getDownloadDirectory(): File? {
     return try {
         val process = ProcessBuilder("xdg-user-dir", "DOWNLOAD").start()
@@ -701,8 +719,9 @@ fun main(args: Array<String>) {
                         val currentSplitDexes = mutableListOf<Pair<String, ByteArray>>()
                         var entry = splitZip.nextEntry
                         while (entry != null) {
-                            if (!entry.isDirectory && Regex("^classes\\d*\\.dex$").matches(entry.name)) {
-                                currentSplitDexes.add(entry.name to splitZip.readBytes())
+                            val safeName = if (!entry.isDirectory) safeZipEntryName(entry.name) else null
+                            if (safeName != null && Regex("^classes\\d*\\.dex$").matches(safeName)) {
+                                currentSplitDexes.add(safeName to splitZip.readBytes())
                             }
                             entry = splitZip.nextEntry
                         }
@@ -755,10 +774,9 @@ fun main(args: Array<String>) {
                     java.util.zip.ZipInputStream(splitStream).use { splitZip ->
                         var entry = splitZip.nextEntry
                         while (entry != null) {
-                            if (!entry.isDirectory && !entry.name.endsWith("/") && targetAbiPrefixes.any { entry.name.startsWith(it) }) {
-                                if (existingEntries.add(entry.name)) {
-                                    splitNativeLibs.add(entry.name to splitZip.readBytes())
-                                }
+                            val safeName = if (!entry.isDirectory) safeZipEntryName(entry.name, targetAbiPrefixes) else null
+                            if (safeName != null && existingEntries.add(safeName)) {
+                                splitNativeLibs.add(safeName to splitZip.readBytes())
                             }
                             entry = splitZip.nextEntry
                         }
@@ -771,7 +789,11 @@ fun main(args: Array<String>) {
                 val env = mapOf("create" to "false")
                 java.nio.file.FileSystems.newFileSystem(uri, env).use { fs ->
                     for ((libName, libBytes) in splitNativeLibs) {
-                        val entryPath = fs.getPath(libName)
+                        val entryPath = fs.getPath(libName).normalize()
+                        val normalizedStr = entryPath.toString().replace('\\', '/')
+                        if (!targetAbiPrefixes.any { normalizedStr.startsWith(it) }) {
+                            error("Path traversal detected in native library entry: $libName")
+                        }
                         entryPath.parent?.let { java.nio.file.Files.createDirectories(it) }
                         java.nio.file.Files.write(entryPath, libBytes)
                     }
@@ -1063,7 +1085,9 @@ fun main(args: Array<String>) {
                             .filter { it.name.endsWith(".apk", ignoreCase = true) && it.name != baseEntry?.name }
                             .toList()
                         splitApkEntries.parallelStream().forEach { splitEntry ->
-                            val splitBasename = File(splitEntry.name).name
+                            val safeSplitName = safeZipEntryName(splitEntry.name)
+                                ?: error("Potential path traversal detected in split entry name: ${splitEntry.name}")
+                            val splitBasename = File(safeSplitName).name
                             if (splitEntry.name.contains("..") || splitEntry.name.startsWith("/") || splitEntry.name.startsWith("\\") || splitEntry.name != splitBasename) {
                                 error("Potential path traversal detected in split entry name: ${splitEntry.name}")
                             }
@@ -1094,7 +1118,7 @@ fun main(args: Array<String>) {
 
                             // Prefix splits with the output name so bundles of different apps never overwrite
                             // each other and `adb install-multiple -r <out-stem>*.apk` installs the whole set.
-                            val signedSplitBasename = File(splitEntry.name).name
+                            val signedSplitBasename = File(safeSplitName).name
                             val signedSplitFile = File(outFile.parentFile, "${outFile.nameWithoutExtension}.$signedSplitBasename")
                             val outParent = outFile.parentFile
                             if (outParent == null || !signedSplitFile.canonicalPath.startsWith(outParent.canonicalPath + File.separator)) {

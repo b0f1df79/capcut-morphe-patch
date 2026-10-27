@@ -181,7 +181,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 </details>
 
 <details>
-<summary>Moovit&nbsp;&nbsp;•&nbsp;&nbsp;<b>5 patches</b></summary>
+<summary>Moovit&nbsp;&nbsp;•&nbsp;&nbsp;<b>6 patches</b></summary>
 <br>
 
 **Supported versions:**
@@ -197,6 +197,7 @@ To use them, add `kveld9/kveld-morphe-patches` as a second source in Morphe Mana
 | **Remove Ads** | Hides banner and inline ads and neutralizes ad unit ID lookups. |  |
 | **Suppress Paywalls** | Suppresses subscription paywalls, onboarding upgrade dialogs, and promotional cards. |  |
 | **Unlock Moovit+** | Unlocks Moovit+ premium subscription features locally, including Safe Ride and address search in favorites. |  |
+| **Use Places API (New)** | Switches search autocomplete from Places API (Legacy) to Places API (New). Legacy Places is not available in new Cloud projects. Requires Places API (New) to be enabled for the API key. |  |
 
 </details>
 

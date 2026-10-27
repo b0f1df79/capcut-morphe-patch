@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-27T02:05:21",
-  "description": "## [1.29.0](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.28.0...v1.29.0) (2026-10-27)\n\n### ⚠ BREAKING CHANGES\n\n* **officehub:** drop Microsoft 365 patch target\n\n### Bug Fixes\n\n* **test:** reject unsafe archive entry names in patch test runner ([8f2e06c](https://github.com/kveld9/kveld-extra-morphe-patches/commit/8f2e06c05d6a62b3d7378504b9f118fcf1c56ca7))\n\n### New Features\n\n* **capcut:** neutralize Google Play Billing for devices without GMS ([4e583ae](https://github.com/kveld9/kveld-extra-morphe-patches/commit/4e583aeb6c40f07c3f5a19b0e26ea7965b5ba27f))\n* **officehub:** drop Microsoft 365 patch target ([04549ec](https://github.com/kveld9/kveld-extra-morphe-patches/commit/04549ecb1677478182c7351831267438516f224c))",
-  "download_url": "https://github.com/kveld9/kveld-extra-morphe-patches/releases/download/v1.29.0/patches-1.29.0.mpp",
+  "created_at": "2026-10-27T02:30:07",
+  "description": "## [1.30.0](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.29.0...v1.30.0) (2026-10-27)\n\n### New Features\n\n* **moovit:** add Places API (New) search patch ([72d57fb](https://github.com/kveld9/kveld-extra-morphe-patches/commit/72d57fb96d1afdc70b8fe18353f47553582b4a87))",
+  "download_url": "https://github.com/kveld9/kveld-extra-morphe-patches/releases/download/v1.30.0/patches-1.30.0.mpp",
   "signature_download_url": "",
-  "version": "1.29.0"
+  "version": "1.30.0"
 }

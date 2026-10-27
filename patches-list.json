@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.29.0",
+  "version": "1.30.0",
   "patches": [
     {
       "name": "AR Effects Slimmer",
@@ -1726,6 +1726,34 @@
               "isExperimental": false,
               "minSdk": null,
               "description": "Download com.mi.earphone v1.38.0i (XAPK bundle) from APKPure"
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Use Places API (New)",
+      "description": "Switches search autocomplete from Places API (Legacy) to Places API (New). Legacy Places is not available in new Cloud projects. Requires Places API (New) to be enabled for the API key.",
+      "default": true,
+      "dependencies": [
+        "BytecodePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "com.tranzmate",
+          "name": "Moovit",
+          "description": null,
+          "apkFileType": "APKM",
+          "appIconColor": "#1864E4",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "5.203.0.1812",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": "Download com.tranzmate v5.203.0.1812 (APKM) arm64-v8a 160-640dpi versionCode 1812 (BUNDLE 31 S) from APKMirror"
             }
           ]
         }

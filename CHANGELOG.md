@@ -1,3 +1,9 @@
+## [1.30.0](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.29.0...v1.30.0) (2026-10-27)
+
+### New Features
+
+* **moovit:** add Places API (New) search patch ([72d57fb](https://github.com/kveld9/kveld-extra-morphe-patches/commit/72d57fb96d1afdc70b8fe18353f47553582b4a87))
+
 ## [1.29.0](https://github.com/kveld9/kveld-extra-morphe-patches/compare/v1.28.0...v1.29.0) (2026-10-27)
 
 ### ⚠ BREAKING CHANGES

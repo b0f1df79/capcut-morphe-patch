@@ -2,12 +2,12 @@ group = "com.kveld9.morphe.extra"
 
 patches {
     about {
-        name = "kveld9 Extra Patches"
+        name = "Đắc patches"
         description = "Standalone, app-specific patches for use with Morphe."
-        source = "https://github.com/kveld9/kveld-extra-morphe-patches"
-        author = "kveld9"
-        contact = "https://github.com/kveld9/kveld-extra-morphe-patches/issues"
-        website = "https://github.com/kveld9/kveld-extra-morphe-patches"
+        source = "https://github.com/b0f1df79/capcut-morphe-patche"
+        author = "Dac981"
+        contact = "https://github.com/b0f1df79/capcut-morphe-patche/issues"
+        website = "https://github.com/b0f1df79/capcut-morphe-patche"
         license = "GPLv3"
     }
 }

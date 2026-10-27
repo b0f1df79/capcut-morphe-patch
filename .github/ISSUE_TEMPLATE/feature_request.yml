@@ -10,8 +10,8 @@ body:
 
         Before creating a new feature request, please keep the following in mind:
 
-        - **Do not submit a duplicate feature request**: Search for existing feature requests [here](https://github.com/kveld9/kveld-extra-morphe-patches/issues?q=label%3A%22Feature+request%22).
-        - **Review Out of Scope Features**: Read our [Project Scope & Out-of-Scope Philosophy](https://github.com/kveld9/kveld-extra-morphe-patches/blob/main/docs/out-of-scope.md). In-app settings panels, server-side bypasses, legacy multi-version support, and feature bloat are strictly rejected.
+        - **Do not submit a duplicate feature request**: Search for existing feature requests [here](https://github.com/b0f1df79/capcut-morphe-patche/issues?q=label%3A%22Feature+request%22).
+        - **Review Out of Scope Features**: Read our [Project Scope & Out-of-Scope Philosophy](https://github.com/b0f1df79/capcut-morphe-patche/blob/main/docs/out-of-scope.md). In-app settings panels, server-side bypasses, legacy multi-version support, and feature bloat are strictly rejected.
         - **Review existing issues**: Make sure your feature request is clear and actionable.
   - type: input
     id: app
@@ -46,7 +46,7 @@ body:
       options:
         - label: I have checked all open and closed feature requests and this is not a duplicate.
           required: true
-        - label: I have read the [Project Scope & Out of Scope documentation](https://github.com/kveld9/kveld-extra-morphe-patches/blob/main/docs/out-of-scope.md) and verified this request is not out of scope.
+        - label: I have read the [Project Scope & Out of Scope documentation](https://github.com/b0f1df79/capcut-morphe-patche/blob/main/docs/out-of-scope.md) and verified this request is not out of scope.
           required: true
         - label: I have chosen an appropriate title.
           required: true

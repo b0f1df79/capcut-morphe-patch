@@ -81,7 +81,7 @@ def build_message(
     project_title: Optional[str] = None,
 ) -> str:
     display_tag = tag if tag else f"v{version}"
-    title = project_title or ("kveld9 Extra Patches" if "extra" in repo else "Morphe Patches")
+    title = project_title or ("Đắc patches" if "capcut-morphe-patche" in repo else "Morphe Patches")
     header = f"<b>New Release: {title} {display_tag}</b>\n\n"
 
     body = markdown_to_telegram_html(notes)
@@ -187,7 +187,7 @@ def main():
             notes = cl_notes
 
     if not repo:
-        repo = get_repo_from_git() or "kveld9/kveld-extra-morphe-patches"
+        repo = get_repo_from_git() or "b0f1df79/capcut-morphe-patche"
 
     if not token or not chat_id:
         print(

@@ -1,13 +1,13 @@
 <a name="top"></a>
 <p align="center">
-  <a href="https://github.com/kveld9/kveld-extra-morphe-patches/releases/latest"><img src="https://img.shields.io/github/v/release/kveld9/kveld-extra-morphe-patches?color=8A2BE2&label=Release&logo=github&style=flat-square" alt="Latest Release" /></a>
-  <a href="https://github.com/kveld9/kveld-extra-morphe-patches/stargazers"><img src="https://img.shields.io/github/stars/kveld9/kveld-extra-morphe-patches?color=8A2BE2&style=flat-square&logo=github" alt="GitHub stars" /></a>
-  <a href="https://github.com/kveld9/kveld-extra-morphe-patches/releases"><img src="https://img.shields.io/github/downloads/kveld9/kveld-extra-morphe-patches/total?color=8A2BE2&style=flat-square&logo=github" alt="Total Downloads" /></a>
+  <a href="https://github.com/b0f1df79/capcut-morphe-patche/releases/latest"><img src="https://img.shields.io/github/v/release/b0f1df79/capcut-morphe-patche?color=8A2BE2&label=Release&logo=github&style=flat-square" alt="Latest Release" /></a>
+  <a href="https://github.com/b0f1df79/capcut-morphe-patche/stargazers"><img src="https://img.shields.io/github/stars/b0f1df79/capcut-morphe-patche?color=8A2BE2&style=flat-square&logo=github" alt="GitHub stars" /></a>
+  <a href="https://github.com/b0f1df79/capcut-morphe-patche/releases"><img src="https://img.shields.io/github/downloads/b0f1df79/capcut-morphe-patche/total?color=8A2BE2&style=flat-square&logo=github" alt="Total Downloads" /></a>
   <img src="https://img.shields.io/badge/Build_Engine-Morphe_Patcher-8A2BE2?style=flat-square" alt="Build engine: Morphe patcher" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-8A2BE2?style=flat-square" alt="License: GNU GPLv3" /></a>
 </p>
 
-<h1 align="center">kveld9 Extra Patches</h1>
+<h1 align="center">Đắc patches</h1>
 
 <p align="center">
   Standalone, app-specific patches for companion targets for use with the <b><a href="https://morphe.software">Morphe</a></b> patcher framework.<br>
@@ -15,9 +15,9 @@
 </p>
 
 <p align="center">
-  <a href="https://morphe.software/add-source?github=kveld9/kveld-extra-morphe-patches"><img src="https://img.shields.io/badge/Morphe_Manager-Add_Patch_Source-8A2BE2?style=for-the-badge&logo=android&logoColor=white" alt="Add Source to Morphe Manager" /></a>
+  <a href="https://morphe.software/add-source?github=b0f1df79/capcut-morphe-patche"><img src="https://img.shields.io/badge/Morphe_Manager-Add_Patch_Source-8A2BE2?style=for-the-badge&logo=android&logoColor=white" alt="Add Source to Morphe Manager" /></a>
   &nbsp;&nbsp;
-  <a href="https://github.com/kveld9/kveld-extra-morphe-patches/releases/latest"><img src="https://img.shields.io/badge/Direct_Download-Get_.MPP_Bundle-0070F3?style=for-the-badge&logo=github&logoColor=white" alt="Download Latest Release" /></a>
+  <a href="https://github.com/b0f1df79/capcut-morphe-patche/releases/latest"><img src="https://img.shields.io/badge/Direct_Download-Get_.MPP_Bundle-0070F3?style=for-the-badge&logo=github&logoColor=white" alt="Download Latest Release" /></a>
   &nbsp;&nbsp;
   <a href="https://t.me/kveldmorphe"><img src="https://img.shields.io/badge/Telegram-Official_Support-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Official Telegram Support Group" /></a>
 </p>
@@ -48,7 +48,7 @@
 1. **Install Morphe Manager**: Download and install the latest release of [Morphe Manager](https://github.com/morphe-app/morphe-manager) on your Android device.
 2. **Download Target APK**: Download the supported APK or APKM bundle for your target application, matching the exact version listed in its [Application Guide](#application-guides) (section 1, Target & Compatibility).
 3. **Add Patch Source**: Add this repository as a custom patch source in Morphe Manager:
-   - Use the one-click [Add Patch Source](https://morphe.software/add-source?github=kveld9/kveld-extra-morphe-patches) action, or manually enter `kveld9/kveld-extra-morphe-patches` in Morphe Manager under **Settings > Sources**.
+   - Use the one-click [Add Patch Source](https://morphe.software/add-source?github=b0f1df79/capcut-morphe-patche) action, or manually enter `b0f1df79/capcut-morphe-patche` in Morphe Manager under **Settings > Sources**.
 4. **Patch & Install**: Open Morphe Manager, select the downloaded target APK/APKM, select your desired patches, tap **Patch**, and install the resulting build.
 
 > [!NOTE]
@@ -161,7 +161,7 @@ Before proposing new features, review the [Project Scope](docs/out-of-scope.md).
 ```
 
 For bug reports, patch inquiries, or feature proposals, open an issue using the templates:
-- [Submit an Issue or Feature Request](https://github.com/kveld9/kveld-extra-morphe-patches/issues/new/choose)
+- [Submit an Issue or Feature Request](https://github.com/b0f1df79/capcut-morphe-patche/issues/new/choose)
 
 <p align="center"><a href="#top"><b>&uarr; Back to top</b></a></p>
 
@@ -173,9 +173,9 @@ For bug reports, patch inquiries, or feature proposals, open an issue using the 
 | Channel / Resource | Link | Description |
 | :--- | :--- | :--- |
 | **Telegram Support** | [t.me/kveldmorphe](https://t.me/kveldmorphe) | Official community discussion, updates, and support group. |
-| **Issue Tracker** | [GitHub Issues](https://github.com/kveld9/kveld-extra-morphe-patches/issues/new/choose) | Bug reports and feature proposals using structured templates. |
+| **Issue Tracker** | [GitHub Issues](https://github.com/b0f1df79/capcut-morphe-patche/issues/new/choose) | Bug reports and feature proposals using structured templates. |
 | **Security Policy** | [SECURITY.md](SECURITY.md) | Reporting security vulnerabilities and disclosure guidelines. |
-| **Release Notes** | [Changelog](CHANGELOG.md) / [Releases](https://github.com/kveld9/kveld-extra-morphe-patches/releases) | Detailed history of releases and patch changes. |
+| **Release Notes** | [Changelog](CHANGELOG.md) / [Releases](https://github.com/b0f1df79/capcut-morphe-patche/releases) | Detailed history of releases and patch changes. |
 
 > [!NOTE]
 > This repository is a companion collection for standalone applications. For Brave, Gboard Lite, TikTok, and other primary targets, visit the main patch repository: **[kveld-morphe-patches](https://github.com/kveld9/kveld-morphe-patches)**.
@@ -190,8 +190,8 @@ For bug reports, patch inquiries, or feature proposals, open an issue using the 
 <!-- CONTRIBUTORS_START -->
 | Contributor | Role & Contributions |
 | :--- | :--- |
-| <a href="https://github.com/aeries0x"><img src="https://github.com/aeries0x.png" alt="@aeries0x" width="48" height="48" style="border-radius: 50%;" /><br><b>@aeries0x</b></a> | Feature request: Proposed X – Default reply sorting (open replies sorted by Likes) feature request ([#12](https://github.com/kveld9/kveld-extra-morphe-patches/issues/12)). |
-| <a href="https://github.com/springfurst"><img src="https://github.com/springfurst.png" alt="@springfurst" width="48" height="48" style="border-radius: 50%;" /><br><b>@springfurst</b></a> | Contributed the Use Places API (New) Moovit search patch ([#44](https://github.com/kveld9/kveld-extra-morphe-patches/pull/44)). |
+| <a href="https://github.com/aeries0x"><img src="https://github.com/aeries0x.png" alt="@aeries0x" width="48" height="48" style="border-radius: 50%;" /><br><b>@aeries0x</b></a> | Feature request: Proposed X – Default reply sorting (open replies sorted by Likes) feature request ([#12](https://github.com/b0f1df79/capcut-morphe-patche/issues/12)). |
+| <a href="https://github.com/springfurst"><img src="https://github.com/springfurst.png" alt="@springfurst" width="48" height="48" style="border-radius: 50%;" /><br><b>@springfurst</b></a> | Contributed the Use Places API (New) Moovit search patch ([#44](https://github.com/b0f1df79/capcut-morphe-patche/pull/44)). |
 <!-- CONTRIBUTORS_END -->
 
 <p align="center"><a href="#top"><b>&uarr; Back to top</b></a></p>
@@ -201,7 +201,7 @@ For bug reports, patch inquiries, or feature proposals, open an issue using the 
 
 ![](images/divider-purple.svg)
 
-**kveld9 Extra Patches** is an independent, community-driven open-source project and is not affiliated, associated, authorized, endorsed by, or in any way officially connected with any of the respective app publishers or their subsidiaries or affiliates.
+**Đắc patches** is an independent, community-driven open-source project and is not affiliated, associated, authorized, endorsed by, or in any way officially connected with any of the respective app publishers or their subsidiaries or affiliates.
 
 All product names, logos, brands, and registered trademarks mentioned in this repository are the property of their respective holders. Their inclusion does not imply affiliation with or endorsement by them.
 

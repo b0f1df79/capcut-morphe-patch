@@ -47,7 +47,7 @@ def get_default_repo() -> str:
     except Exception:
         pass
 
-    return "kveld9/kveld-extra-morphe-patches"
+    return "b0f1df79/capcut-morphe-patche"
 
 
 def fetch_github_json(endpoint: str, repo: str) -> object:

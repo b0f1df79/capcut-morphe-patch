@@ -13,7 +13,7 @@ Only the latest stable release (on the `main` branch) receives security fixes. T
 ## Reporting a Vulnerability
 
 Please report suspected security vulnerabilities using GitHub Private Vulnerability Reporting:
-- Navigate to the **Security** tab of the repository (`kveld9/kveld-extra-morphe-patches`).
+- Navigate to the **Security** tab of the repository (`b0f1df79/capcut-morphe-patche`).
 - Select **Report a vulnerability**.
 
 Do not open public issues, discussions, or pull requests for suspected vulnerabilities.
